@@ -51,7 +51,45 @@ head.ready(function() {
             success: function(response) {
                 console.log(response);
                 $('#analysis').html('<div id="fofe-ner-out"></div>')
-                Util.embed('fofe-ner-out', schema, response, webFontURLs);
+                var dispatcher = Util.embed('fofe-ner-out', schema, response, webFontURLs);
+                
+                var showLinking = function() {
+                    if ($('#linking-content').length == 0) {
+                        var mention = arguments[5];
+                        var e = arguments[0];
+                        var obj = arguments[1];
+                        var mid = arguments[7];
+                        var summary = arguments[6];
+
+                        $('#linking').html(
+                            '<div id="linking-content">\n' + 
+                                '<div>' + mention + '</div>' +
+                                '<div>MID: Unknown</div>\n' +
+                                '<hr>\n' + 
+                                "<dir>Here's the summry of the mention</dir>\n" +
+                            '</div>'
+                        );
+                        var posX = e.pageX;
+                        var posY = e.pageY;
+                        $('#linking').css({
+                            'position': 'absolute', 
+                            'top': posY - 64, 
+                            'left': posX - 64
+                        });
+                        
+                        $('#linking').mouseout(function() {
+                            $('#linking').html('');
+                        });
+                    }
+                }
+                dispatcher.on('displaySpanComment', showLinking);
+
+                // var logArguments = function() { 
+                //   console.log(arguments); 
+                // } 
+                // dispatcher.on('displaySpanComment', logArguments); 
+                // dispatcher.on('displayArcComment', logArguments); 
+                // dispatcher.on('displaySentComment', logArguments); 
             },
             error: function(error) {
                 console.log(error);

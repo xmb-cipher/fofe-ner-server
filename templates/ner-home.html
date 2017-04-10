@@ -3,7 +3,7 @@
 
 <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    <title>FOFE-NER Demo</title>
+    <title>NER Demo</title>
     <link rel="stylesheet" type="text/css" href="static/css/style-vis.css">
     <link rel="stylesheet" type="text/css" href="static/css/ner-core.css">
     <script type="text/javascript" src="static/js/head.js"></script>
@@ -15,13 +15,17 @@
 
 <div id='instruction'>Please type some sentence(s):</div>
 
-<textarea id='user-input' rows='16' cols='100'>
+<!-- <textarea id='user-input' rows='16' cols='100'> -->
+<div id='text-container'>
+<textarea id='user-input'>
 Hopelessness is on the other side of my finishing line.
 </textarea>
-
 <button id='submit' type='button'>Submit</button>
+</div>
+
 
 <div id='analysis'></div>
+<div id='linking'></div>
 
 </body>
 </html>

@@ -1,9 +1,51 @@
 
 #instruction { 
-    font-size: 18px;
+    font-size: 20px;
+}
+
+#text-container {
+	margin-top: 16px;
+	margin-bottom: 32px;
+	margin-left: 32px;
+	margin-right: 32px;
 }
 
 #user-input {
 	font-family: Courier, Monospace;
 	font-size: 16px;
+	width: 100%;
+    min-height: 128px;
 }
+
+#submit {
+	font-size: 16px;
+	float: right;
+	margin-bottom: 16px;
+}
+
+#analysis {
+	margin-top: 32px;
+	margin-bottom: 32px;
+	margin-left: 32px;
+	margin-right: 32px;
+}
+
+#linking-content {
+	margin-left: 64px;
+	margin-top: 64px;
+	width: 512px;
+    height: 128px;
+    padding: 8px;
+    background-color: snow;
+    box-shadow: 6px 6px 2px 8px grey;
+}
+
+hr { 
+    display: block;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    margin-left: auto;
+    margin-right: auto;
+    border-style: inset;
+    border-width: 1px;
+} 

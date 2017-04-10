@@ -14,6 +14,7 @@ app = Flask(__name__)
 def doc2json( doc ):
     cls2ner = [ 'PER', 'LOC', 'ORG', 'MISC' ]
     text, entities, offset, n_entities = '', [], 0, 0
+    comments = []
     for sent, boe, eoe, coe in doc:
         acc_len = [ offset ]
         for w in sent:
@@ -23,12 +24,15 @@ def doc2json( doc ):
             entities.append( [ 'T%d' % n_entities,
                                cls2ner[coe[i]],
                                [[ acc_len[boe[i]], acc_len[eoe[i]] - 1 ]] ] )
+            comments.append( [ 'T%d' % n_entities,
+                               'AnnotatorNotes',
+                               'Feng is working on it' ] )
             n_entities += 1
 
         text += u' '.join( sent ) + u'\n'
         offset = acc_len[-1]
 
-    return { 'text': text.encode('ascii', 'ignore'), 'entities': entities }
+    return { 'text': text.encode('ascii', 'ignore'), 'entities': entities, 'comments' : comments }
 
 
 
