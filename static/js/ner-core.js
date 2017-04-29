@@ -69,15 +69,26 @@ head.ready(function() {
                                 "<dir>Here's the summry of the mention</dir>\n" +
                             '</div>'
                         );
+
                         var posX = e.pageX;
                         var posY = e.pageY;
+                        var offsetX = posX - 16;
+                        if (offsetX + $('#linking').width() > $(window).width()) {
+                            offsetX = $(window).width() - $('#linking').width() - 32;
+                        }
+                        var offsetY = posY - 16;
+                        if (offsetY + $('#linking').height() > $(window).height()) {
+                            offsetY = posY - $('#linking').height() + 32;
+                        }
+
+                        // TODO: sometimes beyong page
                         $('#linking').css({
                             'position': 'absolute', 
-                            'top': posY - 64, 
-                            'left': posX - 64
+                            'top': offsetY, 
+                            'left': offsetX
                         });
                         
-                        $('#linking').mouseout(function() {
+                        $('#linking').mouseleave(function() {
                             $('#linking').html('');
                         });
                     }
