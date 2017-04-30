@@ -46,7 +46,10 @@ head.ready(function() {
         $.ajax({
             url: '/',
             type: 'POST',
-            data: userInput,
+            data: {
+                mode : 'dev',
+                text : userInput
+            },
             dateType: 'JSON',
             success: function(response) {
                 console.log(response);

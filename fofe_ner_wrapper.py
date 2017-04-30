@@ -89,7 +89,11 @@ class fofe_ner_wrapper( object ):
 
 
 
-    def annotate( self, sentences ):
+    def annotate( self, sentences, isDevMode = False ):
+        # TODO ##
+        # make decoding-algorithm and decoding-threshold as dev-option
+
+        tbl_dev_1st = []
         raw1st = [ (s, [], [], []) for s in sentences ]
         data1st = batch_constructor( 
             raw1st,
@@ -140,13 +144,19 @@ class fofe_ner_wrapper( object ):
                     self.config1st.algorithm
                 )
             )
-            boe = [ est[0] for est in estimate ] 
-            eoe = [ est[1] for est in estimate ] 
-            coe = [ est[2] for est in estimate ] 
+            # boe = [ est[0] for est in estimate ] 
+            # eoe = [ est[1] for est in estimate ] 
+            # coe = [ est[2] for est in estimate ]
+            if len(estimate) > 0:
+                boe, eoe, coe = zip(*estimate)
+            else:
+                boe, eoe, coe = [], [], []
+            tbl_dev_1st.append( table )
             raw2nd.append( (sent, boe, eoe, coe) )
         logger.info( 'result1st: %s' % str(raw2nd) )
 
 
+        tbl_dev_2nd = []
         data2nd = batch_constructor( 
             raw2nd,
             self.numericizer1_2nd,
@@ -171,7 +181,8 @@ class fofe_ner_wrapper( object ):
                 )
             )
         prob2nd = numpy.concatenate( prob2nd, axis = 0 )
-        prob2nd = 0.6 * prob1st + 0.4 * prob2nd
+        prob2nd[:,2:] = 0.6 * prob1st[:,2:] + 0.4 * prob2nd[:,2:]
+        prob2nd[:,1] = numpy.argmax( prob2nd[:,2:], axis = 1 ).astype( numpy.float32 )
 
         memory2nd = BytesIO()
         numpy.savetxt( 
@@ -198,11 +209,19 @@ class fofe_ner_wrapper( object ):
                     1 # highest first
                 )
             )
-            boe = [ est[0] for est in estimate ] 
-            eoe = [ est[1] for est in estimate ] 
-            coe = [ est[2] for est in estimate ] 
+            # boe = [ est[0] for est in estimate ] 
+            # eoe = [ est[1] for est in estimate ] 
+            # coe = [ est[2] for est in estimate ]
+            if len(estimate) > 0:
+                boe, eoe, coe = zip(*estimate)
+            else:
+                boe, eoe, coe = [], [], []
+            tbl_dev_2nd.append( table )
             result.append( (sent, boe, eoe, coe) )
-        logger.info( 'result1st: %s' % str(result) )
+        logger.info( 'result2nd: %s' % str(result) )
 
-        return result
+        if isDevMode:
+            return result, tbl_dev_1st, tbl_dev_2nd
+        else:
+            return result
 

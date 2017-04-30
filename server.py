@@ -2,10 +2,11 @@
 
 from flask import Flask, render_template,request, json, jsonify
 from subprocess import Popen, PIPE, call
+from pandas import DataFrame
 from nltk.tokenize import sent_tokenize, word_tokenize
 from fofe_ner_wrapper import fofe_ner_wrapper
 
-import argparse, logging
+import argparse, logging, pandas
 logger = logging.getLogger( __name__ )
 
 
@@ -44,7 +45,9 @@ def homePage():
 
 @app.route('/', methods = ['POST'] )
 def annotate():
-    text = ' '.join( text.strip() for text in request.form )
+    mode = request.form['mode']
+
+    text = request.form['text']
     logger.info( 'text-received: %s' % text )
 
     text = text.encode('ascii', 'ignore').strip()
@@ -52,9 +55,40 @@ def annotate():
     text = [ word_tokenize(t.strip()) for t in text ]
     logger.info( 'text after ssplit & tokenize: %s' % str(text) )
 
-    result = doc2json( annotator.annotate( text ) )
-    logger.info( result )
+    if mode == 'demo':
+        result = doc2json( annotator.annotate( text ) )
+        logger.info( result )
 
+    elif mode == 'dev':
+        inference, score1st, score2nd = annotator.annotate( text, isDevMode = True )
+        # TODO: show inference step by step
+        for i, s1, s2 in zip( inference, score1st, score2nd ):
+            n = len(i[0])
+            pandas.set_option('display.width', 256)
+            pandas.set_option('max_rows', n + 1)
+            pandas.set_option('max_columns', n + 1)
+
+            logger.info( '\n%s' % str(i) )
+            logger.info( '\n%s' % str(DataFrame(
+                data = s1,
+                index = range(n),
+                columns = range(1, n + 1)
+            ) ) )
+            logger.info( '\n%s' % str(DataFrame(
+                data = s2,
+                index = range(n),
+                columns = range(1, n + 1)
+            ) ) )
+
+        result = doc2json( inference )
+        logger.info( result )
+    else:
+        result = { 
+            'text': 'SOMETHING GOES WRONG. PLEASE CONTACT XMB. ',
+            'entities' : []
+        }
+
+    # # example output
     # result = jsonify({
     #     'text'     : "Ed O'Kelley was the man who shot the man who shot Jesse James.",
     #     'entities' : [
