@@ -10,10 +10,11 @@ import argparse, logging, pandas
 logger = logging.getLogger( __name__ )
 
 
-app = Flask(__name__)
+cls2ner = [ 'PER', 'LOC', 'ORG', 'MISC' ]
+app = Flask( __name__ )
+
 
 def doc2json( doc ):
-    cls2ner = [ 'PER', 'LOC', 'ORG', 'MISC' ]
     text, entities, offset, n_entities = '', [], 0, 0
     comments = []
     for sent, boe, eoe, coe in doc:
@@ -60,25 +61,23 @@ def annotate():
         logger.info( result )
 
     elif mode == 'dev':
-        inference, score1st, score2nd = annotator.annotate( text, isDevMode = True )
+        inference, score = annotator.annotate( text, isDevMode = True )
+        logger.info( str(inference) )
+
         # TODO: show inference step by step
-        for i, s1, s2 in zip( inference, score1st, score2nd ):
+        for j, i in  enumerate(inference):
             n = len(i[0])
             pandas.set_option('display.width', 256)
             pandas.set_option('max_rows', n + 1)
             pandas.set_option('max_columns', n + 1)
 
             logger.info( '\n%s' % str(i) )
-            logger.info( '\n%s' % str(DataFrame(
-                data = s1,
-                index = range(n),
-                columns = range(1, n + 1)
-            ) ) )
-            logger.info( '\n%s' % str(DataFrame(
-                data = s2,
-                index = range(n),
-                columns = range(1, n + 1)
-            ) ) )
+            for s in score :
+                logger.info( '\n%s' % str(DataFrame(
+                    data = s[j],
+                    index = range(n),
+                    columns = range(1, n + 1)
+                ) ) )
 
         result = doc2json( inference )
         logger.info( result )
@@ -107,14 +106,24 @@ if __name__== '__main__':
     logging.basicConfig( format = '%(asctime)s : %(levelname)s : %(message)s', 
                          level = logging.INFO )
 
-    # parser = argparse.ArgumentParser()
-    # parser.add_argument( 'model1st', type = str, 
-    #                      help = 'basename of model trained for 1st pass' )
-    # parser.add_argument( 'model2nd', type = str,
-    #                      help = 'basename of model trained for 2nd pass' )
-    # args = parser.parse_args()
-    # logger.info( str(args) + '\n' )
+    parser = argparse.ArgumentParser()
+    parser.add_argument( 'model1st', type = str, 
+                         help = 'basename of model trained for 1st pass' )
+    parser.add_argument( 'vocab1', type = str,
+                         help = 'case-insensitive word-vector for {eng,spa} or word-vector for cmn' )
+    parser.add_argument( 'vocab2', type = str,
+                         help = 'case-sensitive word-vector for {eng,spa} or char-vector for cmn' )
+    parser.add_argument( '--model2nd', type = str, default = None,
+                         help = 'basename of model trained for 2nd pass' )
+    parser.add_argument( '--KBP', action = 'store_true', default = False )
 
-    annotator = fofe_ner_wrapper()
+    args = parser.parse_args()
+    logger.info( str(args) + '\n' )
+
+    if args.KBP:
+        cls2ner = [ 'PER-NAME', 'ORG-NAME', 'GPE-NAME', 'LOC-NAME', 'FAC-NAME',
+                    'PER-NOMINAL', 'ORG-NOMINAL', 'GPE-NOMINAL', 'LOC-NOMINAL', 'FAC-NOMINAL' ]
+
+    annotator = fofe_ner_wrapper( args )
 
     app.run( '0.0.0.0', 20540 )

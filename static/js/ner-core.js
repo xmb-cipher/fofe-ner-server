@@ -1,6 +1,7 @@
 
 var schema = {
     entity_types: [ 
+        // CoNLL2003
         {
             type   : 'PER',
             labels : ['PER'],
@@ -20,7 +21,31 @@ var schema = {
             type   : 'MISC',
             labels : ['MISC'],
             bgColor: '#F1F447',
-            borderColor: 'darken'   }, ]
+            borderColor: 'darken'   },
+
+        // KBP2016
+        { type   : 'PER-NAME',
+          labels : ['PER-NAME'] },
+        { type   : 'ORG-NAME',
+          labels : ['ORG-NAME'] },
+        { type   : 'GPE-NAME',
+          labels : ['GPE-NAME'] },
+        { type   : 'LOC-NAME',
+          labels : ['LOC-NAME'] },
+        { type   : 'FAC-NAME',
+          labels : ['FAC-NAME'] },
+
+        { type   : 'PER-NOMINAL',
+          labels : ['PER-NOMINAL'] },
+        { type   : 'ORG-NOMINAL',
+          labels : ['ORG-NOMINAL'] },
+        { type   : 'GPE-NOMINAL',
+          labels : ['GPE-NOMINAL'] },
+        { type   : 'LOC-NOMINAL',
+          labels : ['LOC-NOMINAL'] },
+        { type   : 'FAC-NOMINAL',
+          labels : ['FAC-NOMINAL'] },
+    ]
 };
 
 
