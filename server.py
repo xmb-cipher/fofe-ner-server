@@ -116,6 +116,8 @@ if __name__== '__main__':
     parser.add_argument( '--model2nd', type = str, default = None,
                          help = 'basename of model trained for 2nd pass' )
     parser.add_argument( '--KBP', action = 'store_true', default = False )
+    parser.add_argument( '--gazetteer', type = str, default = None )
+    parser.add_argument( '--port', type = int, default = 20540 )
 
     args = parser.parse_args()
     logger.info( str(args) + '\n' )
@@ -126,4 +128,4 @@ if __name__== '__main__':
 
     annotator = fofe_ner_wrapper( args )
 
-    app.run( '0.0.0.0', 20540 )
+    app.run( '0.0.0.0', args.port )

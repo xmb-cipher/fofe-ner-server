@@ -2,7 +2,6 @@
 
 import logging, cPickle, os
 from fofe_mention_net import *
-from gigaword2feature import *
 from io import BytesIO
 
 logger = logging.getLogger( __name__ )
@@ -11,30 +10,15 @@ logger = logging.getLogger( __name__ )
 
 class fofe_ner_wrapper( object ):
     def __init__( self, args ):
-        # this_dir = os.path.dirname( os.path.abspath( __file__ ) )
-
         #####################
         # load 1st-pass model
-
-        # model1st = os.path.join( this_dir, 'model', '1st-pass-train-dev' )
         model1st = args.model1st
         config1 = mention_config()
         with open( '%s.config' % model1st, 'rb' ) as fp:
-            old = cPickle.load(fp).__dict__
-            config1.__dict__.update( old )
+            config1.__dict__.update( cPickle.load(fp).__dict__ )
         mention_net_1st = fofe_mention_net( config1, None )
         mention_net_1st.fromfile( model1st )
 
-        # vocab1 = os.path.join( 
-        #     this_dir,
-        #     'model',
-        #     'reuters256-case-insensitive.wordlist' 
-        # )
-        # vocab2 = os.path.join( 
-        #     this_dir,
-        #     'model',
-        #     'reuters256-case-sensitive.wordlist' 
-        # )
         vocab1 = args.vocab1
         vocab2 = args.vocab2
 
@@ -110,7 +94,9 @@ class fofe_ner_wrapper( object ):
             self.numericizer2_1st,
             gazetteer = self.gazetteer,
             alpha = self.config1st.word_alpha,
-            window = self.config1st.n_window
+            window = self.config1st.n_window,
+            n_label_type = self.config1st.n_label_type,
+            language = self.config1st.language
         )
         logger.info( 'data1st: ' + str(data1st) )
 
@@ -149,7 +135,8 @@ class fofe_ner_wrapper( object ):
                     sent, 
                     estimate, 
                     table, 
-                    self.config1st.threshold,
+                    [0.72, 0.72], # self.config1st.threshold,
+                                # TODO: the threshold pair from dev-set doesn't seem good
                     self.config1st.algorithm
                 )
             )
@@ -166,7 +153,7 @@ class fofe_ner_wrapper( object ):
             if isDevMode:
                 return raw2nd, [tbl_dev_1st]
             else:
-                raw2nd
+                return raw2nd
 
 
         tbl_dev_2nd = []
@@ -177,7 +164,9 @@ class fofe_ner_wrapper( object ):
             gazetteer = [set()] * self.config2nd.n_label_type,
             alpha = self.config2nd.word_alpha,
             window = self.config2nd.n_window,
-            is2ndPass = True
+            is2ndPass = True,
+            n_label_type = self.config2nd.n_label_type,
+            language = self.config2nd.language
         )
         logger.info( 'data2nd: ' + str(data2nd) )
 
@@ -250,6 +239,7 @@ if __name__ == '__main__':
             self.vocab1 = '%s/model/gw128-case-insensitive.wordlist' % this_dir
             self.vocab2 = '%s/model/gw128-case-sensitive.wordlist' % this_dir
             self.KBP = True
+            self.gazetteer = None
 
     annotator = fofe_ner_wrapper( test_args() )
 
