@@ -24,6 +24,6 @@ ${THIS_DIR}/server.py \
 	"${THIS_DIR}/model/$mod1" \
 	"${THIS_DIR}/model/$mod2" \
 	"${THIS_DIR}/model/$mod3" \
-	--port "$port"
+	--port "$port" \
 	--KBP \
 |& tee ${THIS_DIR}/logs/${timestamp}
