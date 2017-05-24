@@ -13,6 +13,7 @@ timestamp=`date +"%Y-%m-%d-%H-%M-%S"`
 # 	--model2nd "${THIS_DIR}/model/2nd-pass-train-dev"
 # |& tee ${THIS_DIR}/logs/${timestamp}
 
+
 ${THIS_DIR}/server.py \
 	"${THIS_DIR}/model/eng2016" \
 	"${THIS_DIR}/model/gw128-case-insensitive.wordlist" \
