@@ -401,7 +401,6 @@ var main = function() {
                     }
                 }
                 // Second pass
-
                 if (second_pass.localeCompare("N/A") == 0){
 
                 } else {
