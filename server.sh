@@ -13,17 +13,10 @@ timestamp=`date +"%Y-%m-%d-%H-%M-%S"`
 # 	--model2nd "${THIS_DIR}/model/2nd-pass-train-dev"
 # |& tee ${THIS_DIR}/logs/${timestamp}
 
-if ($1 == "eng") then
-	set mod1 = "eng2016"
-	set mod2 = "gw128-case-insensitive.wordlist"
-	set mod3 = "gw128-case-sensitive.wordlist"
-
-port = $2
 
 ${THIS_DIR}/server.py \
-	"${THIS_DIR}/model/$mod1" \
-	"${THIS_DIR}/model/$mod2" \
-	"${THIS_DIR}/model/$mod3" \
-	--port "$port" \
+	"${THIS_DIR}/model/eng2016" \
+	"${THIS_DIR}/model/gw128-case-insensitive.wordlist" \
+	"${THIS_DIR}/model/gw128-case-sensitive.wordlist" \
 	--KBP \
 |& tee ${THIS_DIR}/logs/${timestamp}
