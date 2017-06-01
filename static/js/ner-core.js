@@ -355,7 +355,7 @@ var main = function() {
             url: '/',
             type: 'POST',
             data: {
-                mode : 'demo',
+                mode : 'dev',
                 text : userInput,
                 lang: selectedText
             },
