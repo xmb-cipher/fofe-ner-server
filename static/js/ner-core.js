@@ -344,16 +344,20 @@ var main = function() {
 
     // Developer mode
     $('#dev_submit').click(function(){
+        // Erase all of the analysis, error messages after each submit (since the text might be different)
         $('#analysis').html('');
+        $('#errors').html('');
         $("#spinner").css("display", "block");
         $('#linking').css("display", "none");
         var userInput = $('#user-input').val();
+        var selectedText = $("#lang-sel").find("option:selected").text();
         $.ajax({
             url: '/',
             type: 'POST',
             data: {
-                mode: 'dev',
-                text : userInput
+                mode : 'demo',
+                text : userInput,
+                lang: selectedText
             },
             dataType: 'JSON',
             success: function(response){
