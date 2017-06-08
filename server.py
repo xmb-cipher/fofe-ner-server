@@ -279,47 +279,51 @@ def annotate():
         result['notes'] = notes
         print("DOC2JSONDEMO TAKES %s SECONDS" % (time.time() - start_time3))
 
-        if language == "eng":
-            start_time4 = time.time()
-            write_info_to_file(sentence, result['entities'])
-            print("WRITE INFO TO FILE TAKES %s SECONDS" % (time.time() - start_time4))
+        # Linking part: Uncomment to use 
+        # =============
+        # if language == "eng":
+        #     start_time4 = time.time()
+        #     write_info_to_file(sentence, result['entities'])
+        #     print("WRITE INFO TO FILE TAKES %s SECONDS" % (time.time() - start_time4))
 
-            # *******************************************************
-            # UNCOMMENT TO GENERATE MID
-            # *******************************************************
-            # Delete the files in rst
+        #     # *******************************************************
+        #     # UNCOMMENT TO GENERATE MID
+        #     # *******************************************************
+        #     # Delete the files in rst
 
-            folder = '/local/scratch/nana/EL-GUI/ELdata/rst'
-            for the_file in os.listdir(folder):
-                file_path = os.path.join(folder, the_file)
-                try:
-                    if os.path.isfile(file_path):
-                        os.unlink(file_path)
-                except Exception as e:
-                    print(e)
+        #     folder = '/local/scratch/nana/EL-GUI/ELdata/rst'
+        #     for the_file in os.listdir(folder):
+        #         file_path = os.path.join(folder, the_file)
+        #         try:
+        #             if os.path.isfile(file_path):
+        #                 os.unlink(file_path)
+        #         except Exception as e:
+        #             print(e)
 
-            os.chdir('/local/scratch/nana/EL-GUI/bin')
+        #     os.chdir('/local/scratch/nana/EL-GUI/bin')
 
-            # Run : sh /local/scratch/nana/EL-GUI/bin/run.sh
-            command = ["csh", "/local/scratch/nana/EL-GUI/bin/run.sh"]
+        #     # Run : sh /local/scratch/nana/EL-GUI/bin/run.sh
+        #     command = ["csh", "/local/scratch/nana/EL-GUI/bin/run.sh"]
 
-            p = Popen(command, stdout=PIPE, bufsize=1)
-            while p.poll() is None:
-                line = p.stdout.readline()
-                print(line)
+        #     p = Popen(command, stdout=PIPE, bufsize=1)
+        #     while p.poll() is None:
+        #         line = p.stdout.readline()
+        #         print(line)
 
-            os.chdir('/local/scratch/nana/fofe-ner-server')
+        #     os.chdir('/local/scratch/nana/fofe-ner-server')
 
-            # *******************************************************
+        #     # *******************************************************
 
-            # Retrieve MID
-            start_time5 = time.time()
-            mention_to_mid = retrieve_linking_info()
-            print("RETRIEVE MIDS TAKES %s SECONDS" % (time.time() - start_time5))
+        #     # Retrieve MID
+        #     start_time5 = time.time()
+        #     mention_to_mid = retrieve_linking_info()
+        #     print("RETRIEVE MIDS TAKES %s SECONDS" % (time.time() - start_time5))
 
-            result['mids'] = mention_to_mid
-        else:
-            result['mids'] = {}
+        #     result['mids'] = mention_to_mid
+        # else:
+        #     result['mids'] = {}
+
+        result['mids'] = {}
 
     # DEVELOPER MODE
     elif mode == 'dev':
