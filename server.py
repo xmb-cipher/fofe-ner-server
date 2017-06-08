@@ -8,6 +8,7 @@ from pandas import DataFrame
 from fofe_ner_wrapper import fofe_ner_wrapper
 from langdetect import detect
 from pycorenlp import StanfordCoreNLP
+import pprint
 
 reload(sys)
 sys.setdefaultencoding("utf-8")
@@ -243,6 +244,8 @@ def annotate():
 
     output = nlp.annotate(text, properties=properties)
 
+    pprint.pprint(output)
+    
     text_array = []
     sentences = output['sentences']
     for sent in sentences:
@@ -265,10 +268,12 @@ def annotate():
 
         print("ANNOTATOR.ANNOTATE TAKES %s SECONDS" % (time.time() - start_time1))
 
-        if language == "eng":
-            start_time2 = time.time()
-            write_sentence_to_file(inference)
-            print("WRITE_SENTENCE_TO_FILE TAKES %s SECONDS" % (time.time() - start_time2))
+        # Linking part: Uncomment to use 
+        # =============
+        # if language == "eng":
+        #     start_time2 = time.time()
+        #     write_sentence_to_file(inference)
+        #     print("WRITE_SENTENCE_TO_FILE TAKES %s SECONDS" % (time.time() - start_time2))
 
         start_time3 = time.time()
         if len(score) > 1:
