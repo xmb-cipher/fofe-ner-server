@@ -245,7 +245,7 @@ def annotate():
     output = nlp.annotate(text, properties=properties)
 
     pprint.pprint(output)
-    
+
     text_array = []
     sentences = output['sentences']
     for sent in sentences:
@@ -265,6 +265,12 @@ def annotate():
         # retrieve the MIDs from the csv file
         start_time1 = time.time()
         inference, score = annotator.annotate(text, isDevMode=True)
+
+        pprint.pprint(inference)
+
+        # Replace the offsets from the annotator with the offsets from Stanford
+
+
 
         print("ANNOTATOR.ANNOTATE TAKES %s SECONDS" % (time.time() - start_time1))
 
