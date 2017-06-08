@@ -266,7 +266,7 @@ def annotate():
         start_time1 = time.time()
         inference, score = annotator.annotate(text, isDevMode=True)
 
-        pprint.pprint(inference)
+        logger.info(inference)
 
         # Replace the offsets from the annotator with the offsets from Stanford
 
