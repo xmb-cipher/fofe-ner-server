@@ -334,14 +334,6 @@ var demo_success_handler = function(response) {
 
 var main = function() {
 
-    // Submits when press Enter while in the input field
-    $('#input-field').live("keypress", function(e) {
-        var code = (e.keyCode ? e.keyCode : e.which);
-        if (code == 13) {
-            $('#submit').click();
-        }
-    });
-
     // Developer mode
     $('#dev_submit').click(function(){
         // Erase all of the analysis, error messages after each submit (since the text might be different)
@@ -352,7 +344,7 @@ var main = function() {
         var userInput = $('#user-input').val();
         var selectedText = $("#lang-sel").find("option:selected").text();
         $.ajax({
-            url: '/',
+            url: 'info.php',
             type: 'POST',
             data: {
                 mode : 'dev',
@@ -461,7 +453,7 @@ var main = function() {
         var userInput = $('#user-input').val();
         $.ajax({
             //url: 'info.php',
-            url: '/',
+            url: 'info.php',
             type: 'POST',
             data: {
                 mode : 'demo',

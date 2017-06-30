@@ -247,12 +247,15 @@ def annotate():
     pprint.pprint(output)
 
     text_array = []
+    text_to_offset = {}
     sentences = output['sentences']
     for sent in sentences:
         new = []
         tokens = sent['tokens']
         for word in tokens:
             new.append(word['originalText'])
+        if word['originalText'] not in text_to_offset:
+            text_to_offset
         text_array.append(new)
 
     # =====================================================================================
@@ -261,7 +264,6 @@ def annotate():
 
     # DEMO MODE
     if mode == 'demo':
-
         # retrieve the MIDs from the csv file
         start_time1 = time.time()
         inference, score = annotator.annotate(text, isDevMode=True)
