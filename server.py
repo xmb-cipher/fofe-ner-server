@@ -272,8 +272,6 @@ def annotate():
 
         # Replace the offsets from the annotator with the offsets from Stanford
 
-
-
         print("ANNOTATOR.ANNOTATE TAKES %s SECONDS" % (time.time() - start_time1))
 
         # Linking part: Uncomment to use 
@@ -394,7 +392,8 @@ def annotate():
     #         ['T4', 'PER', [[50, 61]]],
     #     ],
     # })
-
+    print('RESULT')
+    print(result)
     print("TOTAL TAKES %s SECONDS" % (time.time() - start_time))
     return jsonify(result)
 
