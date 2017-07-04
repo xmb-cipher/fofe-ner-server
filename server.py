@@ -53,7 +53,12 @@ def inference_to_json(inference, score_matrix):
             acc_len.append(acc_len[-1] + len(w) + 1)  # last exclusive
 
         text += u' '.join(sent) + u'\n'
+
+        # for the next sentence in the text
         offset = acc_len[-1]
+
+
+        # for each mention detected from the inference, find its offset
 
         # indices that contain a non-None value
         s = score_matrix[m]
@@ -70,6 +75,57 @@ def inference_to_json(inference, score_matrix):
                                          ])
                     scores.append([word_slice, "{0:.2f}".format(ent_score[1])])
                     n_entities += 1
+
+        m += 1
+
+    return {'text': text, 'entities': entities_new, 'comments': comments}
+
+def inference_to_json(inference, score_matrix):
+    """
+    Converts the inference information into a JSON convertible data structure.
+    :param inference: [(sentence, beginning of entity, end of entity, entity names), (...)]
+    :type inference: array, [(string, array of indices, array of indices, array of strings), (...)]
+    :param score_matrix: matrix containing either None or a tuple (enitty name, score)
+    :type score_matrix: array
+    :return: Returns the infomation in inference as a dictionary
+    :rtype: dict
+    """
+    text, entities, offset, n_entities = '', [], 0, 0
+    comments = []
+
+    n_entities = 0
+    entities_new = []
+    scores = []  # (slice, score)
+    m = 0
+    for sent, boe, eoe, coe in inference:
+        # boe - beginning of entity (index)
+        # eoe - end of entity (index)
+        # coe - entity name
+        acc_len = [offset]  # slice
+
+        for w in sent:
+            acc_len.append(acc_len[-1] + len(w) + 1)  # last exclusive
+
+        s = score_matrix[m]
+
+        for i in range(len(boe)):
+            word_slice = [acc_len[boe[i]], acc_len[eoe[i] + 1] - 1]
+            ent_score = s[boe[i]][eoe[i]]
+            assert ent_score is not None
+            entities_new.append(['T%d' % n_entities,
+                                 ent_score[0],
+                                 [word_slice],
+                                 # ent_score[1]
+                                 "{0:.2f}".format(ent_score[1])  # score
+                                 ])
+            scores.append([word_slice, "{0:.2f}".format(ent_score[1])])
+            n_entities += 1
+
+        text += u' '.join(sent) + u'\n'
+
+        # for the next sentence in the text
+        offset = acc_len[-1]
+
         m += 1
 
     return {'text': text, 'entities': entities_new, 'comments': comments}
