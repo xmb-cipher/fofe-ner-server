@@ -107,6 +107,7 @@ def inference_to_json(inference, score_matrix):
             acc_len.append(acc_len[-1] + len(w) + 1)  # last exclusive
 
         s = score_matrix[m]
+        logger.info("matrix: " + str(s))
 
         for i in range(len(boe)):
             word_slice = [acc_len[boe[i]], acc_len[eoe[i] + 1] - 1]
