@@ -392,8 +392,8 @@ def annotate():
     #         ['T4', 'PER', [[50, 61]]],
     #     ],
     # })
-    print('RESULT')
-    print(result)
+    logger.info('RESULT')
+    logger.info(result)
     print("TOTAL TAKES %s SECONDS" % (time.time() - start_time))
     return jsonify(result)
 
