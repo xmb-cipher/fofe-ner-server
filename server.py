@@ -27,7 +27,7 @@ OUTPUT_PATH = "/local/scratch/nana/EL-GUI/ELdata/rst/edl.iNCML.tsv.name"
 CANDIDATE_FILE = "/local/scratch/nana/EL-GUI/ELdata/rst/out.candidate.txt"
 
 
-def inference_to_json(inference, score_matrix):
+def inference_to_json_1(inference, score_matrix):
     """
     Converts the inference information into a JSON convertible data structure.
     :param inference: [(sentence, beginning of entity, end of entity, entity names), (...)]
