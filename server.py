@@ -27,59 +27,6 @@ OUTPUT_PATH = "/local/scratch/nana/EL-GUI/ELdata/rst/edl.iNCML.tsv.name"
 CANDIDATE_FILE = "/local/scratch/nana/EL-GUI/ELdata/rst/out.candidate.txt"
 
 
-def inference_to_json_1(inference, score_matrix):
-    """
-    Converts the inference information into a JSON convertible data structure.
-    :param inference: [(sentence, beginning of entity, end of entity, entity names), (...)]
-    :type inference: array, [(string, array of indices, array of indices, array of strings), (...)]
-    :param score_matrix: matrix containing either None or a tuple (enitty name, score)
-    :type score_matrix: array
-    :return: Returns the infomation in inference as a dictionary
-    :rtype: dict
-    """
-    text, entities, offset, n_entities = '', [], 0, 0
-    comments = []
-
-    n_entities = 0
-    entities_new = []
-    scores = []  # (slice, score)
-    m = 0
-    for sent, boe, eoe, coe in inference:
-        # boe - beginning of entity (index)
-        # eoe - end of entity (index)
-        # coe - entity name
-        acc_len = [offset]  # slice
-        for w in sent:
-            acc_len.append(acc_len[-1] + len(w) + 1)  # last exclusive
-
-        text += u' '.join(sent) + u'\n'
-
-        # for the next sentence in the text
-        offset = acc_len[-1]
-
-
-        # for each mention detected from the inference, find its offset
-
-        # indices that contain a non-None value
-        s = score_matrix[m]
-        for i in range(len(s)):
-            for j in range(len(s[i])):
-                ent_score = s[i][j]  # tuple
-                if ent_score is not None:
-                    word_slice = [acc_len[i], acc_len[j + 1] - 1]
-                    entities_new.append(['T%d' % n_entities,
-                                         ent_score[0],
-                                         [word_slice],
-                                         # ent_score[1]
-                                         "{0:.2f}".format(ent_score[1])  # score
-                                         ])
-                    scores.append([word_slice, "{0:.2f}".format(ent_score[1])])
-                    n_entities += 1
-
-        m += 1
-
-    return {'text': text, 'entities': entities_new, 'comments': comments}
-
 def inference_to_json(inference, score_matrix):
     """
     Converts the inference information into a JSON convertible data structure.
@@ -130,103 +77,6 @@ def inference_to_json(inference, score_matrix):
         m += 1
 
     return {'text': text, 'entities': entities_new, 'comments': comments}
-
-
-def write_sentence_to_file(inference):
-    """
-    Writes the sentences from inference into the file FILE. Adds the path of the file into eng.all.list .
-    :param inference: [(sentence, beginning of entity, end of entity, entity names), (...)]
-    :type inference: array, [(string, array of indices, array of indices, array of strings), (...)]
-    """
-    filename = PATH + FILENAME + FILE_EXT
-    file = open(filename, "w")
-
-    for item in inference:
-        sentence = " ".join(item[0]) + '\n'
-        file.write(sentence.encode("utf8"))
-    file.close()
-
-    # Add filename into the eng.all.list
-    file = open(FILE_LIST, "w")
-    file.write(filename + '\n')
-    file.close()
-
-
-def add_spaces(text):
-    """
-    (Helper) Add spaces between commas and periods.
-    """
-    return text.replace(". ", " . ").replace(", ", " , ")
-
-
-def write_info_to_file(text, entities):
-    """
-    Used to generate input for entity linking. Using text and the list of entities, write to INFO_PATH in the format:
-    LDC     TEDL15_EVAL_000     mention     file_offset     ID_XXX     entity type      NAM     1.0     N   N   N:
-    """
-    text = add_spaces(text)
-    file = open(INFO_PATH, "w")
-    for item in entities:
-        offset = item[2][0]
-        etype = item[1]
-        mention = text[offset[0]: offset[1]]
-        file_offset = FILENAME + ":" + str(offset[0]) + "-" + str(offset[1])
-        final = "LDC\tTEDL15_EVAL_0000" + "\t" + mention.encode(
-            'utf8') + "\t" + file_offset + "\tID_XXX\t" + etype + "\tNAM\t1.0\tN\tN\tN\n"
-        file.write(final)
-    file.close()
-
-
-def retrieve_linking_info():
-    """
-    After running the linking code, retrieve the output info, including mid, full mention, candidate mids and summary
-    for each mention.
-    :return: linking information for each mention
-    :rtype: dict (mention: [mid: string, full_mention: string, candidates: array of strings, summary: string])
-    """
-    linking_info = {}
-    file = open(OUTPUT_PATH, "r")
-
-    for line in file:
-        info = line.split("\t")
-        text_mention = info[2]
-        full_mention = info[8]
-        if len(info) > 9:
-            summary = info[9].strip('\n')
-            summary = summary.strip()
-        else:
-            summary = "N/A"
-        mid = info[4]
-        if "NIL" in mid:
-            mid = "Unknown"
-        if "N/A" in full_mention:
-            full_mention = text_mention
-        candidates = retrieve_candidate_mids(text_mention)
-
-        linking_info[text_mention] = [mid, full_mention, candidates, summary]
-    return linking_info
-
-
-def retrieve_candidate_mids(mention):
-    """
-    Retrieve the candidate MIDs for the given mention. They are located in CANDIDATE_FILE in a certain format.
-    :param mention: The mention
-    :type mention: str
-    :return: The candidate MIDs
-    :rtype: array of strings
-    """
-    file = open(CANDIDATE_FILE, "r")
-    candidates = []
-    for line in file:
-        info = line.split("\t")
-        text_mention = info[1]
-        if mention == text_mention:
-            candidates = info[5].strip('\n')
-            candidates = candidates.split(" || ")
-            candidates = [c.strip("[") for c in candidates]
-            candidates = [c.strip("]") for c in candidates]
-    return candidates
-
 
 @app.route('/', methods=['GET'])
 def home_page():
@@ -310,7 +160,7 @@ def annotate():
         new = []
         tokens = sent['tokens']
         for word in tokens:
-            new.append(word['originalText'])
+            new.append(word['word']) # non-escaped
         if word['originalText'] not in text_to_offset:
             text_to_offset
         text_array.append(new)
@@ -331,12 +181,6 @@ def annotate():
 
         print("ANNOTATOR.ANNOTATE TAKES %s SECONDS" % (time.time() - start_time1))
 
-        # Linking part: Uncomment to use 
-        # =============
-        # if language == "eng":
-        #     start_time2 = time.time()
-        #     write_sentence_to_file(inference)
-        #     print("WRITE_SENTENCE_TO_FILE TAKES %s SECONDS" % (time.time() - start_time2))
 
         start_time3 = time.time()
         if len(score) > 1:
@@ -346,50 +190,6 @@ def annotate():
 
         result['notes'] = notes
         print("DOC2JSONDEMO TAKES %s SECONDS" % (time.time() - start_time3))
-
-        # Linking part: Uncomment to use 
-        # =============
-        # if language == "eng":
-        #     start_time4 = time.time()
-        #     write_info_to_file(sentence, result['entities'])
-        #     print("WRITE INFO TO FILE TAKES %s SECONDS" % (time.time() - start_time4))
-
-        #     # *******************************************************
-        #     # UNCOMMENT TO GENERATE MID
-        #     # *******************************************************
-        #     # Delete the files in rst
-
-        #     folder = '/local/scratch/nana/EL-GUI/ELdata/rst'
-        #     for the_file in os.listdir(folder):
-        #         file_path = os.path.join(folder, the_file)
-        #         try:
-        #             if os.path.isfile(file_path):
-        #                 os.unlink(file_path)
-        #         except Exception as e:
-        #             print(e)
-
-        #     os.chdir('/local/scratch/nana/EL-GUI/bin')
-
-        #     # Run : sh /local/scratch/nana/EL-GUI/bin/run.sh
-        #     command = ["csh", "/local/scratch/nana/EL-GUI/bin/run.sh"]
-
-        #     p = Popen(command, stdout=PIPE, bufsize=1)
-        #     while p.poll() is None:
-        #         line = p.stdout.readline()
-        #         print(line)
-
-        #     os.chdir('/local/scratch/nana/fofe-ner-server')
-
-        #     # *******************************************************
-
-        #     # Retrieve MID
-        #     start_time5 = time.time()
-        #     mention_to_mid = retrieve_linking_info()
-        #     print("RETRIEVE MIDS TAKES %s SECONDS" % (time.time() - start_time5))
-
-        #     result['mids'] = mention_to_mid
-        # else:
-        #     result['mids'] = {}
 
         result['mids'] = {}
 
@@ -449,6 +249,7 @@ def annotate():
     #         ['T4', 'PER', [[50, 61]]],
     #     ],
     # })
+
     logger.info('RESULT')
     logger.info(result)
     print("TOTAL TAKES %s SECONDS" % (time.time() - start_time))
@@ -466,6 +267,7 @@ if __name__ == '__main__':
                         help='case-insensitive word-vector for {eng,spa} or word-vector for cmn')
     parser.add_argument('vocab2', type=str,
                         help='case-sensitive word-vector for {eng,spa} or char-vector for cmn')
+    parser.add_argument('coreNLP_port', type=str, help='set the localhost port to coreNLP_port.')
     parser.add_argument('--model2nd', type=str, default=None,
                         help='basename of model trained for 2nd pass')
     parser.add_argument('--KBP', action='store_true', default=False)

@@ -18,5 +18,6 @@ ${THIS_DIR}/server.py \
 	"${THIS_DIR}/model/eng2016" \
 	"${THIS_DIR}/model/gw128-case-insensitive.wordlist" \
 	"${THIS_DIR}/model/gw128-case-sensitive.wordlist" \
+	"9000" \
 	--KBP \
 |& tee ${THIS_DIR}/logs/${timestamp}
