@@ -160,8 +160,8 @@ def annotate():
         new = []
         tokens = sent['tokens']
         for word in tokens:
-            new.append(word['word']) # non-escaped
-        if word['originalText'] not in text_to_offset:
+            new.append(word['word'])
+        if word['word'] not in text_to_offset:
             text_to_offset
         text_array.append(new)
 
