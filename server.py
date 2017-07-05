@@ -239,17 +239,6 @@ def annotate():
             'entities': []
         }
 
-    # # example output
-    # result = jsonify({
-    #     'text'     : "Ed O'Kelley was the man who shot the man who shot Jesse James.",
-    #     'entities' : [
-    #         ['T1', 'PER', [[0, 11]]],
-    #         ['T2', 'PER', [[20, 23]]],
-    #         ['T3', 'PER', [[37, 40]]],
-    #         ['T4', 'PER', [[50, 61]]],
-    #     ],
-    # })
-
     logger.info('RESULT')
     logger.info(result)
     print("TOTAL TAKES %s SECONDS" % (time.time() - start_time))
@@ -276,8 +265,6 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    print(args)
-
     if args.KBP:
         cls2ner = ['PER-NAME', 'ORG-NAME', 'GPE-NAME', 'LOC-NAME', 'FAC-NAME',
                    'PER-NOMINAL', 'ORG-NOMINAL', 'GPE-NOMINAL', 'LOC-NOMINAL', 'FAC-NOMINAL']
@@ -285,3 +272,6 @@ if __name__ == '__main__':
     annotator = fofe_ner_wrapper(args)
 
     app.run('0.0.0.0', args.port)
+
+
+
