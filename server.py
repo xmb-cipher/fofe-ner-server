@@ -134,7 +134,7 @@ def annotate():
     # Stanford CoreNLP
     # =====================================================================================
 
-    nlp = StanfordCoreNLP('http://localhost:9000')
+    nlp = StanfordCoreNLP('http://localhost:7000')
 
     properties = {'annotators': 'tokenize,ssplit',
                   'outputFormat': 'json'}
