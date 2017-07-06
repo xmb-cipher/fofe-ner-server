@@ -13,11 +13,25 @@ timestamp=`date +"%Y-%m-%d-%H-%M-%S"`
 # 	--model2nd "${THIS_DIR}/model/2nd-pass-train-dev"
 # |& tee ${THIS_DIR}/logs/${timestamp}
 
+function NextPort{
+	netstat -atn | perl -0777 -ne \
+		'@ports = /tcp.*?\:(\d+)\s+/imsg ;
+		for $port (32768..61000) {
+			if (!grep(/^$port$/, @ports)) {
+				print $port;
+				last
+			}
+		}'
+}
+
+echo NextPort
+
 
 ${THIS_DIR}/server.py \
 	"${THIS_DIR}/model/eng2016" \
 	"${THIS_DIR}/model/gw128-case-insensitive.wordlist" \
 	"${THIS_DIR}/model/gw128-case-sensitive.wordlist" \
-	"9000" \
+	"/eecs/research/asr/Shared/ner-toolkit/CoreNLP" \
+	"1000" \
 	--KBP \
 |& tee ${THIS_DIR}/logs/${timestamp}

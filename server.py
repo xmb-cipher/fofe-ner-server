@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from flask import Flask, render_template, request, jsonify
-from subprocess import Popen, PIPE
+from subprocess import call
 import os, time, sys, argparse, logging, pandas
 from pandas import DataFrame
 from fofe_ner_wrapper import fofe_ner_wrapper
@@ -134,7 +134,15 @@ def annotate():
     # Stanford CoreNLP
     # =====================================================================================
 
-    nlp = StanfordCoreNLP('http://localhost:7000')
+    cwd = os.getcwd() # current directory
+
+    os.chdir(args.coreNLP_path)
+
+    os.system('java -mx4g -cp "*" edu.stanford.nlp.pipeline.StanfordCoreNLPServer -port ' + args.coreNLP_port + ' -timeout 15000')
+
+    os.chdir(cwd)
+
+    nlp = StanfordCoreNLP('http://localhost:' + args.coreNLP_port)
 
     properties = {'annotators': 'tokenize,ssplit',
                   'outputFormat': 'json'}
@@ -267,6 +275,7 @@ if __name__ == '__main__':
                         help='case-insensitive word-vector for {eng,spa} or word-vector for cmn')
     parser.add_argument('vocab2', type=str,
                         help='case-sensitive word-vector for {eng,spa} or char-vector for cmn')
+    parser.add_argument('coreNLP_path', type=str, help='Path to the Stanford CoreNLP folder.')
     parser.add_argument('coreNLP_port', type=str, help='set the localhost port to coreNLP_port.')
     parser.add_argument('--model2nd', type=str, default=None,
                         help='basename of model trained for 2nd pass')
@@ -285,3 +294,6 @@ if __name__ == '__main__':
     annotator = fofe_ner_wrapper(args)
 
     app.run('0.0.0.0', args.port)
+
+
+    
