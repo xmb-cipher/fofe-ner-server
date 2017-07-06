@@ -137,6 +137,8 @@ def annotate():
     cwd = os.getcwd() # current directory
 
     os.chdir(args.coreNLP_path)
+    logger.info(args.coreNLP_path)
+    logger.info(args.coreNLP_port)
 
     os.system('java -mx4g -cp "*" edu.stanford.nlp.pipeline.StanfordCoreNLPServer -port ' + args.coreNLP_port + ' -timeout 15000')
 

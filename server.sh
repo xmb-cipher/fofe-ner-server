@@ -13,7 +13,7 @@ timestamp=`date +"%Y-%m-%d-%H-%M-%S"`
 # 	--model2nd "${THIS_DIR}/model/2nd-pass-train-dev"
 # |& tee ${THIS_DIR}/logs/${timestamp}
 
-function NextPort{
+NextPort () {
 	netstat -atn | perl -0777 -ne \
 		'@ports = /tcp.*?\:(\d+)\s+/imsg ;
 		for $port (32768..61000) {
