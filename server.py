@@ -134,15 +134,15 @@ def annotate():
     # Stanford CoreNLP
     # =====================================================================================
 
-    cwd = os.getcwd() # current directory
+    # cwd = os.getcwd() # current directory
 
-    os.chdir(args.coreNLP_path)
-    logger.info(args.coreNLP_path)
-    logger.info(args.coreNLP_port)
+    # os.chdir(args.coreNLP_path)
+    # logger.info(args.coreNLP_path)
+    # logger.info(args.coreNLP_port)
 
-    os.system('java -mx4g -cp "*" edu.stanford.nlp.pipeline.StanfordCoreNLPServer -port ' + args.coreNLP_port + ' -timeout 15000')
+    # os.system('java -mx4g -cp "*" edu.stanford.nlp.pipeline.StanfordCoreNLPServer -port ' + args.coreNLP_port + ' -timeout 15000')
 
-    os.chdir(cwd)
+    # os.chdir(cwd)
 
     nlp = StanfordCoreNLP('http://localhost:' + args.coreNLP_port)
 
