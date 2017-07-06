@@ -344,7 +344,8 @@ var main = function() {
         var userInput = $('#user-input').val();
         var selectedText = $("#lang-sel").find("option:selected").text();
         $.ajax({
-            url: 'info.php',
+            // url: 'info.php',
+            url: '/',
             type: 'POST',
             data: {
                 mode : 'dev',
@@ -504,7 +505,7 @@ var main = function() {
         var userInput = $('#user-input').val();
         $.ajax({
             //url: 'info.php',
-            url: 'info.php',
+            url: '/',
             type: 'POST',
             data: {
                 mode : 'demo',
