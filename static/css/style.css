@@ -505,6 +505,12 @@ svg {
   height: 1px;
   width: 100%;
 }
+
+h4.hidden {
+  color: red;
+}
+
+
 /*-------------- Input field ------------------*/
 
 section#input-field {

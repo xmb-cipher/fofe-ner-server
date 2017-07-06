@@ -78,6 +78,56 @@ def inference_to_json(inference, score_matrix):
 
     return {'text': text, 'entities': entities_new, 'comments': comments}
 
+
+
+def inference_to_json_dev(inference, score_matrix):
+    """
+    Converts the inference information into a JSON convertible data structure.
+    :param inference: [(sentence, beginning of entity, end of entity, entity names), (...)]
+    :type inference: array, [(string, array of indices, array of indices, array of strings), (...)]
+    :param score_matrix: matrix containing either None or a tuple (enitty name, score)
+    :type score_matrix: array
+    :return: Returns the infomation in inference as a dictionary
+    :rtype: dict
+    """
+    text, entities, offset, n_entities = '', [], 0, 0
+    comments = []
+
+    n_entities = 0
+    entities_new = []
+    scores = []  # (slice, score)
+    m = 0
+    for sent, boe, eoe, coe in inference:
+        # boe - beginning of entity (index)
+        # eoe - end of entity (index)
+        # coe - entity name
+        acc_len = [offset]  # slice
+        for w in sent:
+            acc_len.append(acc_len[-1] + len(w) + 1)  # last exclusive
+
+        text += u' '.join(sent) + u'\n'
+        offset = acc_len[-1]
+
+        # indices that contain a non-None value
+        s = score_matrix[m]
+        for i in range(len(s)):
+            for j in range(len(s[i])):
+                ent_score = s[i][j]  # tuple
+                if ent_score is not None:
+                    word_slice = [acc_len[i], acc_len[j + 1] - 1]
+                    entities_new.append(['T%d' % n_entities,
+                                         ent_score[0],
+                                         [word_slice],
+                                         # ent_score[1]
+                                         "{0:.2f}".format(ent_score[1])  # score
+                                         ])
+                    scores.append([word_slice, "{0:.2f}".format(ent_score[1])])
+                    n_entities += 1
+        m += 1
+
+    return {'text': text, 'entities': entities_new, 'comments': comments}
+
+
 @app.route('/', methods=['GET'])
 def home_page():
     """
@@ -208,18 +258,36 @@ def annotate():
         inference, score = annotator.annotate(text, isDevMode=True)
 
         # contains the first pass info for sentences -  {"0": {text: ..., entities: ..., comments: ...}, "1": {...}}
-        first_pass = {}
+        first_pass_shown = {}
+        shown_contains = []
+        first_pass_hidden = {}
         # First pass
         for i in range(len(inference)):
             inf = [inference[i]]
             matrix = [score[0][i]]
             fp = inference_to_json(inf, matrix)
-            first_pass[str(i)] = fp
+            first_pass_shown[str(i)] = fp
+            shown_contains.append(fp['entities'])
+
+        for i in range(len(inference)):
+            inf = [inference[i]]
+            matrix = [score[0][i]]
+            fp = inference_to_json_dev(inf, matrix)
+            if fp['entities'] != first_pass_shown[str(i)]['entities']:
+                shown = first_pass_shown[str(i)]['entities']
+                hidden = fp['entities']
+                inter = []
+                for entity in hidden:
+                    if entity not in shown:
+                        inter.append(entity)
+                fp['entities'] = hidden
+            first_pass_hidden[str(i)] = fp
 
         # Second pass
         second_pass = "N/A"
         if len(score) > 1:
-            second_pass = {}
+            second_pass_shown = {}
+            second_pass_hidden = {}
             for i in range(len(inference)):
                 inf = [inference[i]]
                 matrix = [score[1][i]]
@@ -240,7 +308,7 @@ def annotate():
                         columns=range(1, n + 1)
                     )))
 
-        result = {'first_pass': first_pass, 'second_pass': second_pass}
+        result = {'first_pass_shown': first_pass_shown, 'first_pass_hidden': first_pass_hidden, 'second_pass': second_pass}
 
     # SOMETHING WENT WRONG
     else:

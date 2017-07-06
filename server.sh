@@ -26,7 +26,6 @@ NextPort () {
 
 echo NextPort
 
-
 ${THIS_DIR}/server.py \
 	"${THIS_DIR}/model/eng2016" \
 	"${THIS_DIR}/model/gw128-case-insensitive.wordlist" \

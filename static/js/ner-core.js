@@ -360,25 +360,76 @@ var main = function() {
                 $('#linking').html('');
                 //$('#analysis').html('<div id="fofe-ner-out"></div>');
 
-                var first_pass = response.first_pass;
+                var first_pass_shown = response.first_pass_shown;
+                var first_pass_hidden = response.first_pass_hidden;
                 var second_pass = response.second_pass;
 
                 var container = '<div class="first_pass_space row"></div><div class="second_pass_space row"></div>';
                 $('#analysis').append($(container));
 
-                var num_sent = Object.keys(first_pass).length;
-                var j, element, dispatcher, element_div, cards, ent_type, s, mention, score, entities, text, info;
-
                 // First pass
+                var num_sent = Object.keys(first_pass_shown).length;
+                var j, dispatcher, element_div, ent_type, s, mention, score, entities, text, info;
+
                 // $('#analysis').append('<div class="pull-left row "><h3> First pass: </h3></div>');
                 for (j = 0; j < num_sent; j++){ // loop through sentences
-                    entities = first_pass[j].entities;
-                    text = first_pass[j].text;
 
                     element_div = '<div class="container" id="container-first_pass' + j + '"><div id="first_pass' + j
                         + '"></div><div class="row" id="info_first_pass' + j + '"></div></div>';
                     $('.first_pass_space').append(element_div);
-                    dispatcher = Util.embed('first_pass' + j, schema, first_pass[j], webFontURLs);
+                    dispatcher = Util.embed('first_pass' + j, schema, first_pass_shown[j], webFontURLs);
+
+                    // first pass shown (outputted by model)
+                    entities = first_pass_shown[j].entities;
+                    text = first_pass_shown[j].text;
+                    for (i = 0; i < entities.length; i++){ // loop through mentions
+                        console.log("looping once");
+                        ent_type = entities[i][1];
+                        s = entities[i][2][0]; // slice array
+                        mention = text.slice(s[0], s[1]);
+                        score = entities[i][3];
+
+                        info = '<div class="">' +
+                            '<div class="info-background pull-left col-md-4">' +
+                            '         <div class="info">'+
+                            '                <h4 class="card-title">'+ mention + '</h4>'+
+                            '                <p class="mid"><strong class="bolden">Confidence: </strong>' + score +'</p>' +
+                            '         </div></div></div>';
+                        $("#info_first_pass" + j).append(info);
+                    }
+
+                    // first pass hidden (ignored by model)
+                    entities = first_pass_hidden[j].entities;
+                    text = first_pass_hidden[j].text;
+                    for (i = 0; i < entities.length; i++){ // loop through mentions
+                        console.log("looping once");
+                        ent_type = entities[i][1];
+                        s = entities[i][2][0]; // slice array
+                        mention = text.slice(s[0], s[1]);
+                        score = entities[i][3];
+
+                        info = '<div class="">' +
+                            '<div class="info-background pull-left col-md-4">' +
+                            '         <div class="info hidden">'+
+                            '                <h4 class="card-title hidden">'+ mention + '</h4>'+
+                            '                <p class="mid"><strong class="bolden">Confidence: </strong>' + score +'</p>' +
+                            '         </div></div></div>';
+                        $("#info_first_pass" + j).append(info);
+                    }
+
+                }
+
+                // First pass hidden (wasn't outputted by the model)
+                num_sent = Object.keys(first_pass_hidden).length;
+                var prev_num = j;
+
+                for (j = 0; j < num_sent; j++){ // loop through sentences
+                    entities = first_pass_hidden[j].entities;
+                    text = first_pass_hidden[j].text;
+
+                    element_div = '<div class="container" id="container-first_pass' + (j + prev_num) + '"><div id="first_pass' + j
+                        + '"></div><div class="row" id="info_first_pass' + (j + prev_num) + '"></div></div>';
+                    $('.first_pass_space').append(element_div);
 
                     for (i = 0; i < entities.length; i++){ // loop through mentions
                         console.log("looping once");
@@ -396,10 +447,10 @@ var main = function() {
                         $("#info_first_pass" + j).append(info);
                     }
                 }
-                // Second pass
-                if (second_pass.localeCompare("N/A") == 0){
 
-                } else {
+
+                // Second pass
+                if (second_pass.localeCompare("N/A") != 0) {
                     for (j = 0; j < num_sent; j++){ // loop through sentences
                         entities = second_pass[j].entities;
                         text = second_pass[j].text;
@@ -409,7 +460,7 @@ var main = function() {
                         $('.second_pass_space').append(element_div);
                         dispatcher = Util.embed('second_pass' + j, schema, second_pass[j], webFontURLs);
 
-                        for (i = 0; i < entities.length; i++){ // loop through mentions
+                        for (var i = 0; i < entities.length; i++){ // loop through mentions
                             console.log("looping once");
                             ent_type = entities[i][1];
                             s = entities[i][2][0]; // slice array
