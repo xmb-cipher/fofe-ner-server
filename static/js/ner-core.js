@@ -442,7 +442,7 @@ var main = function() {
                         info = '<div class="">' +
                             '<div class="info-background pull-left col-md-4">' +
                             '         <div class="info">'+
-                            '                <h4 class="card-title">'+ mention + '</h4>'+
+                            '                <h4 class="card-title" style="color:red;">'+ mention + '</h4>'+
                             '                <p class="mid"><strong class="bolden">Confidence: </strong>' + score +'</p>' +
                             '         </div></div></div>';
                         $("#info_first_pass" + j).append(info);
