@@ -295,6 +295,9 @@ def annotate():
                     if entity[1:] == hidden[1:]:
                         first_pass_hidden[str(i)]['entities'].remove(hidden)
 
+        for i in range(len(first_pass_hidden)):
+            [first_pass_hidden[str(i)]['entities'].remove(x) for x in first_pass_hidden[str(i)]['entities'] if len(x) == 0]
+
         # Second pass
         second_pass = "N/A"
         if len(score) > 1:

@@ -412,13 +412,12 @@ var main = function() {
                         info = '<div class="">' +
                             '<div class="info-background pull-left col-md-4">' +
                             '         <div class="info">'+
-                            '                <h4 class="card-title hidden">'+ mention + '</h4>'+
+                            '                <h4 class="card-title">'+ mention + '</h4>'+
                             '                <p class="mid"><strong class="bolden">Confidence: </strong>' + score +'</p>' +
                             '                <p class="entity-type"><strong class="bolden">Entity Type: </strong>' + ent_type +'</p>' +
                             '         </div></div></div>';
                         $("#info_first_pass" + j).append(info);
                     }
-
                 }
 
                 // First pass hidden (wasn't outputted by the model)
@@ -447,10 +446,10 @@ var main = function() {
                             '                <p class="mid"><strong class="bolden">Confidence: </strong>' + score +'</p>' +
                             '                <p class="entity-type hidden"><strong class="bolden">Entity Type: </strong>' + ent_type +'</p>' +
                             '         </div></div></div>';
+
                         $("#info_first_pass" + j).append(info);
                     }
                 }
-
 
                 // Second pass
                 if (second_pass.localeCompare("N/A") != 0) {
@@ -493,7 +492,6 @@ var main = function() {
 
     // Demo mode
     $('#submit').click(function(){
-
         // Selected text
         var selectedText = $("#lang-sel").find("option:selected").text();
         var start = new Date().getTime();
