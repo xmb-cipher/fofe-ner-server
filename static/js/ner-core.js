@@ -420,37 +420,6 @@ var main = function() {
                     }
                 }
 
-                // First pass hidden (wasn't outputted by the model)
-                num_sent = Object.keys(first_pass_hidden).length;
-                var prev_num = j;
-
-                for (j = 0; j < num_sent; j++){ // loop through sentences
-                    entities = first_pass_hidden[j].entities;
-                    text = first_pass_hidden[j].text;
-
-                    element_div = '<div class="container" id="container-first_pass' + (j + prev_num) + '"><div id="first_pass' + j
-                        + '"></div><div class="row" id="info_first_pass' + (j + prev_num) + '"></div></div>';
-                    $('.first_pass_space').append(element_div);
-
-                    for (i = 0; i < entities.length; i++){ // loop through mentions
-                        console.log("looping once");
-                        ent_type = entities[i][1];
-                        s = entities[i][2][0]; // slice array
-                        mention = text.slice(s[0], s[1]);
-                        score = entities[i][3];
-
-                        info = '<div class="">' +
-                            '<div class="info-background pull-left col-md-4">' +
-                            '         <div class="info">'+
-                            '                <h4 class="card-title" style="color:palevioletred;">'+ mention + '</h4>'+
-                            '                <p class="mid"><strong class="bolden">Confidence: </strong>' + score +'</p>' +
-                            '                <p class="entity-type hidden"><strong class="bolden">Entity Type: </strong>' + ent_type +'</p>' +
-                            '         </div></div></div>';
-
-                        $("#info_first_pass" + j).append(info);
-                    }
-                }
-
                 // Second pass
                 if (second_pass.localeCompare("N/A") != 0) {
                     for (j = 0; j < num_sent; j++){ // loop through sentences
