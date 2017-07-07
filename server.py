@@ -286,10 +286,13 @@ def annotate():
                 fp['entities'] = inter
             first_pass_hidden[str(i)] = fp
 
-        for entity in first_pass_shown['entities']:
-            for hidden in first_pass_hidden['entities']:
-                if entity[1:] == hidden[1:]:
-                    first_pass_hidden['entities'].remove(hidden)
+        for i in range(len(first_pass_shown)):
+            shown = first_pass_shown[i]['entities']
+            hid = first_pass_hidden[i]['entities']
+            for entity in shown:
+                for hidden in hid:
+                    if entity[1:] == hidden[1:]:
+                        first_pass_hidden[i]['entities'].remove(hidden)
 
 
         # Second pass
