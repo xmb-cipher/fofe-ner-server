@@ -408,6 +408,10 @@ var main = function() {
                 // $('#analysis').append('<div class="pull-left row "><h3> First pass: </h3></div>');
                 for (j = 0; j < num_sent; j++){ // loop through sentences
                     // first pass hidden (ignored by model)
+                    element_div = '<div class="container" id="container-first_pass' + j + '"><div id="first_pass' + j
+                        + '"></div><div class="row" id="info_first_pass' + j + '"></div></div>';
+                    $('.first_pass_space').append(element_div);
+
                     entities = first_pass_hidden[j].entities;
                     text = first_pass_hidden[j].text;
                     for (i = 0; i < entities.length; i++){ // loop through mentions
