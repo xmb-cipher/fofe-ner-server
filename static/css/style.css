@@ -506,7 +506,7 @@ svg {
   width: 100%;
 }
 
-h4 .hidden {
+h4.hidden {
   color: red;
 }
 

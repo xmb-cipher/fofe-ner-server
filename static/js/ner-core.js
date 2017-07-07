@@ -411,7 +411,7 @@ var main = function() {
 
                         info = '<div class="">' +
                             '<div class="info-background pull-left col-md-4">' +
-                            '         <div class="info">'+
+                            '         <div class="info hidden">'+
                             '                <h4 class="card-title hidden">'+ mention + '</h4>'+
                             '                <p class="mid"><strong class="bolden">Confidence: </strong>' + score +'</p>' +
                             '         </div></div></div>';
