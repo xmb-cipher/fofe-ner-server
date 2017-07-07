@@ -403,13 +403,12 @@ var main = function() {
 
                 // First pass hidden
                 num_sent = Object.keys(first_pass_hidden).length;
-                var j, dispatcher, element_div, ent_type, s, mention, score, entities, text, info;
-
+                var prev = j
                 // $('#analysis').append('<div class="pull-left row "><h3> First pass: </h3></div>');
                 for (j = 0; j < num_sent; j++){ // loop through sentences
                     // first pass hidden (ignored by model)
-                    element_div = '<div class="container" id="container-first_pass' + j + '"><div id="first_pass' + j
-                        + '"></div><div class="row" id="info_first_pass' + j + '"></div></div>';
+                    element_div = '<div class="container" id="container-first_pass' + (j + prev) + '"><div id="first_pass' + j
+                        + '"></div><div class="row" id="info_first_pass' + (j + prev) + '"></div></div>';
                     $('.first_pass_space').append(element_div);
 
                     entities = first_pass_hidden[j].entities;
