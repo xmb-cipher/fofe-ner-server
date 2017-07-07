@@ -261,7 +261,8 @@ def annotate():
         first_pass_shown = {}
         shown_contains = []
         first_pass_hidden = {}
-        # First pass
+        
+        # First pass shown
         for i in range(len(inference)):
             inf = [inference[i]]
             matrix = [score[0][i]]
@@ -269,11 +270,12 @@ def annotate():
             first_pass_shown[str(i)] = fp
             shown_contains.append(fp['entities'])
 
+        # First pass hidden
         for i in range(len(inference)):
             inf = [inference[i]]
             matrix = [score[0][i]]
             fp = inference_to_json_dev(inf, matrix)
-            if fp['entities'] != first_pass_shown[str(i)]['entities']:
+            if set(fp['entities']) != set(first_pass_shown[str(i)]['entities']):
                 shown = first_pass_shown[str(i)]['entities']
                 hidden = fp['entities']
                 inter = []
