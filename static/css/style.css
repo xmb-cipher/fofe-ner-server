@@ -511,8 +511,8 @@ h4.hidden {
 }
 
 h4.color-pink {
-  color: palevioletred;
-  -webkit-text-fill-color: palevioletred;
+  color: palevioletred !important;
+  -webkit-text-fill-color: palevioletred !important;
 }
 
 
@@ -630,8 +630,8 @@ section#response-field {
 }
 
 .bolden {
-  color: #57BC90;
-  -webkit-text-fill-color: #57BC90;
+  color: #57BC90 !important;
+  -webkit-text-fill-color: #57BC90 !important;
 }
 
 .card-title {
