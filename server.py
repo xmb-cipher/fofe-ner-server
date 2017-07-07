@@ -280,8 +280,9 @@ def annotate():
                 hidden = fp['entities']
                 inter = []
                 for entity in hidden:
-                    if entity not in shown:
-                        inter.append(entity)
+                    for s in shown:
+                        if entity[1:] != shown[1:]:
+                            inter.append(entity)
                 fp['entities'] = inter
             first_pass_hidden[str(i)] = fp
 
