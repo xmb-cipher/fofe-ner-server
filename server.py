@@ -293,7 +293,7 @@ def annotate():
                 for hidden in hid:
                     if entity[1:] == hidden[1:]:
                         first_pass_hidden[str(i)]['entities'].remove(hidden)
-
+        print("first pass hidden: " + str(first_pass_hidden['entities']))
 
         # Second pass
         second_pass = "N/A"
