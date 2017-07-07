@@ -414,6 +414,7 @@ var main = function() {
                             '         <div class="info hidden">'+
                             '                <h4 class="card-title hidden">'+ mention + '</h4>'+
                             '                <p class="mid"><strong class="bolden">Confidence: </strong>' + score +'</p>' +
+                            '                <p class="entity-type hidden"><strong class="bolden">Entity Type: </strong>' + ent_type +'</p>' +
                             '         </div></div></div>';
                         $("#info_first_pass" + j).append(info);
                     }
