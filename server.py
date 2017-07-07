@@ -275,14 +275,14 @@ def annotate():
             inf = [inference[i]]
             matrix = [score[0][i]]
             fp = inference_to_json_dev(inf, matrix)
-            
-            shown = first_pass_shown[str(i)]['entities']
-            hidden = fp['entities']
-            inter = []
-            for entity in hidden:
-                if entity not in shown:
-                    inter.append(entity)
-            fp['entities'] = hidden
+            if fp['entities'] != first_pass_shown[str(i)]['entities']:
+                shown = first_pass_shown[str(i)]['entities']
+                hidden = fp['entities']
+                inter = []
+                for entity in hidden:
+                    if entity not in shown:
+                        inter.append(entity)
+                fp['entities'] = inter
             first_pass_hidden[str(i)] = fp
 
         # Second pass
