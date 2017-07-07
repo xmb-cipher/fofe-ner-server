@@ -412,7 +412,7 @@ var main = function() {
                         info = '<div class="">' +
                             '<div class="info-background pull-left col-md-4">' +
                             '         <div class="info">'+
-                            '                <h4 class="card-title" style="color:palevioletred;">'+ mention + '</h4>'+
+                            '                <h4 class="card-title color-pink" style="color:palevioletred;">'+ mention + '</h4>'+
                             '                <p class="mid"><strong class="bolden">Confidence: </strong>' + score +'</p>' +
                             '                <p class="entity-type"><strong class="bolden">Entity Type: </strong>' + ent_type +'</p>' +
                             '         </div></div></div>';
