@@ -279,15 +279,9 @@ def annotate():
                 shown = first_pass_shown[str(i)]['entities']
                 hidden = fp['entities']
                 inter = []
-                bin = False
                 for entity in hidden:
-                    for s in shown:
-                        if entity[1:] == shown[1:]:
-                            bin = True
-                            break
-                    if not bin:
+                    if entity not in shown:
                         inter.append(entity)
-
                 fp['entities'] = inter
             first_pass_hidden[str(i)] = fp
 
