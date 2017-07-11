@@ -49,7 +49,7 @@ def inference_to_json(inference, score_matrix):
 
         for i in range(len(boe)):
             word_slice = [acc_len[boe[i]], acc_len[eoe[i]] - 1]
-            print("word slice: " + word_slice)
+            print("word slice: " + str(word_slice))
             ent_score = s[boe[i]][eoe[i] - 1]
             logger.info("ent score : " + str(ent_score))
             entities_new.append(['T%d' % n_entities,
