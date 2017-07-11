@@ -18,15 +18,6 @@ logger = logging.getLogger(__name__)
 cls2ner = ['PER', 'LOC', 'ORG', 'MISC']
 app = Flask(__name__)
 
-PATH = "/local/scratch/nana/EL-GUI/ELdata/file_gen/"
-FILENAME = "ENG_NW_0000"
-FILE_EXT = ".nw.xml"
-FILE_LIST = "/local/scratch/nana/EL-GUI/ELdata/src/eng.all.list"
-INFO_PATH = "/local/scratch/nana/EL-GUI/ELdata/src/test.el.iflytek.eng.tab"
-OUTPUT_PATH = "/local/scratch/nana/EL-GUI/ELdata/rst/edl.iNCML.tsv.name"
-CANDIDATE_FILE = "/local/scratch/nana/EL-GUI/ELdata/rst/out.candidate.txt"
-
-
 def inference_to_json(inference, score_matrix):
     """
     Converts the inference information into a JSON convertible data structure.
@@ -225,6 +216,7 @@ def annotate():
         text_array.append(new)
 
     # =====================================================================================
+
     text = text_array
     logger.info('text after split & tokenize: %s' % str(text))
 
