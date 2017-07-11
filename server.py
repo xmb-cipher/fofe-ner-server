@@ -47,6 +47,8 @@ def inference_to_json(inference, score_matrix):
         s = score_matrix[m]
         logger.info("matrix: " + str(s))
 
+        text += u' '.join(sent) + u'\n'
+
         for i in range(len(boe)):
             word_slice = [acc_len[boe[i]], acc_len[eoe[i]] - 1]
             logger.info("word slice: " + str(text[word_slice[0]:word_slice[1]]))
@@ -61,7 +63,6 @@ def inference_to_json(inference, score_matrix):
             scores.append([word_slice, "{0:.2f}".format(ent_score[1])])
             n_entities += 1
 
-        text += u' '.join(sent) + u'\n'
 
         # for the next sentence in the text
         offset = acc_len[-1]
