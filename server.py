@@ -49,6 +49,7 @@ def inference_to_json(inference, score_matrix):
 
         for i in range(len(boe)):
             word_slice = [acc_len[boe[i]], acc_len[eoe[i]] - 1]
+            print("word slice: " + word_slice)
             ent_score = s[boe[i]][eoe[i] - 1]
             logger.info("ent score : " + str(ent_score))
             entities_new.append(['T%d' % n_entities,
@@ -370,6 +371,38 @@ if __name__ == '__main__':
     annotator = fofe_ner_wrapper(args)
 
     app.run('0.0.0.0', args.port)
+
+
+
+{'text': u"The -LRB- Syrian Observatory -RRB- for Human Rights told Reuters on Tuesday that it had `` confirmed information '' that Islamic State leader Abu Bakr al-Baghdadi has been killed .\nThe report came just days after the Iraqi army recaptured the last sectors of the northern Iraqi city of Mosul , which Baghdadi 's forces overran almost exactly three years ago .\n", 'notes': '', 'mids': {}, 'comments': [],
+ 'entities': [['T0', 'GPE_NAM', [[10, 16]], '0.98'], ['T1', 'ORG_NAM', [[57, 64]], '0.82'], ['T2', 'ORG_NAM', [[121, 134]], '0.95'], ['T3', 'PER_NOM', [[135, 141]], '0.90'], ['T4', 'GPE_NAM', [[217, 222]], '0.93'], ['T5', 'GPE_NAM', [[272, 277]], '0.98'], ['T6', 'GPE_NOM', [[278, 282]], '0.90'], ['T7', 'GPE_NAM', [[286, 291]], '0.86'], ['T8', 'GPE_NAM', [[300, 308]], '0.94']]}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     
