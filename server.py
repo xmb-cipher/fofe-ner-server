@@ -79,7 +79,6 @@ def inference_to_json(inference, score_matrix):
     return {'text': text, 'entities': entities_new, 'comments': comments}
 
 
-
 def inference_to_json_dev(inference, score_matrix):
     """
     Converts the inference information into a JSON convertible data structure.
@@ -159,26 +158,26 @@ def annotate():
         language = "cmn"
 
     # -------------------------- Language detector ---------------------------------
+    elif selected == "Automatic":
+        lang_detect = detect(text)
+        if lang_detect not in ['en', 'es', 'zh-cn', 'zh-tw']:
+            return jsonify({'text': "Language not found", 'entities': [], 'notes': "Language not supported."})
 
-    lang_detect = detect(text)
-    if lang_detect not in ['en', 'es', 'zh-cn', 'zh-tw']:
-        return jsonify({'text': "Language not found", 'entities': [], 'notes': "Language not supported."})
+        english = ((lang_detect == 'en') and (language == "eng"))
+        spanish = ((lang_detect == 'es') and (language == "spa"))
+        chinese = ((lang_detect[0:2] == "zh") and (language == "cmn"))
 
-    english = ((lang_detect == 'en') and (language == "eng"))
-    spanish = ((lang_detect == 'es') and (language == "spa"))
-    chinese = ((lang_detect[0:2] == "zh") and (language == "cmn"))
+        if not (english or spanish or chinese):
+            selected = "Chinese"
+            if lang_detect == "en":
+                selected = "English"
+                language = "eng"
+            elif lang_detect == "es":
+                selected = "Spanish"
+                language = "spa"
 
-    if not (english or spanish or chinese):
-        selected = "Chinese"
-        if lang_detect == "en":
-            selected = "English"
-            language = "eng"
-        elif lang_detect == "es":
-            selected = "Spanish"
-            language = "spa"
-
-        notes = "Your selected language does not seem to match the language of the text." \
-                " We will be assuming that the text is in " + selected + "."
+            notes = "Your selected language does not seem to match the language of the text." \
+                    " We will be assuming that the text is in " + selected + "."
 
     # =====================================================================================
     # Stanford CoreNLP
