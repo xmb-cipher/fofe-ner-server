@@ -53,15 +53,16 @@ def inference_to_json(inference, score_matrix):
             word_slice = [acc_len[boe[i]], acc_len[eoe[i]] - 1]
             logger.info("word slice: " + str(text[word_slice[0]:word_slice[1]]))
             ent_score = s[boe[i]][eoe[i] - 1]
-            logger.info("ent score : " + str(ent_score))
-            entities_new.append(['T%d' % n_entities,
-                                 ent_score[0],
-                                 [word_slice],
-                                 # ent_score[1]
-                                 "{0:.2f}".format(ent_score[1])  # score
-                                 ])
-            scores.append([word_slice, "{0:.2f}".format(ent_score[1])])
-            n_entities += 1
+            if ent_score is not None:
+                logger.info("ent score : " + str(ent_score))
+                entities_new.append(['T%d' % n_entities,
+                                     ent_score[0],
+                                     [word_slice],
+                                     # ent_score[1]
+                                     "{0:.2f}".format(ent_score[1])  # score
+                                     ])
+                scores.append([word_slice, "{0:.2f}".format(ent_score[1])])
+                n_entities += 1
 
 
         # for the next sentence in the text
