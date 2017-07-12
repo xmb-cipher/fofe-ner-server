@@ -68,6 +68,62 @@ def inference_to_json(inference, score_matrix, non_escaped):
     return {'text': text, 'entities': entities_new, 'comments': comments}
 
 
+def inference_to_json_dev_demo(inference, score_matrix):
+    """
+    Converts the inference information into a JSON convertible data structure.
+    :param inference: [(sentence, beginning of entity, end of entity, entity names), (...)]
+    :type inference: array, [(string, array of indices, array of indices, array of strings), (...)]
+    :param score_matrix: matrix containing either None or a tuple (enitty name, score)
+    :type score_matrix: array
+    :return: Returns the infomation in inference as a dictionary
+    :rtype: dict
+    """
+    text, entities, offset, n_entities = '', [], 0, 0
+    comments = []
+
+    n_entities = 0
+    entities_new = []
+    scores = []  # (slice, score)
+    m = 0
+    for sent, boe, eoe, coe in inference:
+        # boe - beginning of entity (index)
+        # eoe - end of entity (index)
+        # coe - entity name
+        acc_len = [offset]  # slice
+
+        for w in sent:
+            acc_len.append(acc_len[-1] + len(w) + 1)  # last exclusive
+
+        s = score_matrix[m]
+        logger.info("matrix: " + str(s))
+
+        text += u' '.join(sent) + u'\n'
+
+        for i in range(len(boe)):
+            word_slice = [acc_len[boe[i]], acc_len[eoe[i]] - 1]
+            logger.info("word slice: " + str(text[word_slice[0]:word_slice[1]]))
+            ent_score = s[boe[i]][eoe[i] - 1]
+            if ent_score is not None:
+                logger.info("ent score : " + str(ent_score))
+                entities_new.append(['T%d' % n_entities,
+                                     ent_score[0],
+                                     [word_slice],
+                                     # ent_score[1]
+                                     "{0:.2f}".format(ent_score[1])  # score
+                                     ])
+                scores.append([word_slice, "{0:.2f}".format(ent_score[1])])
+                n_entities += 1
+
+
+        # for the next sentence in the text
+        offset = acc_len[-1]
+
+        m += 1
+
+    return {'text': text, 'entities': entities_new, 'comments': comments}
+
+
+
 def inference_to_json_dev(inference, score_matrix):
     """
     Converts the inference information into a JSON convertible data structure.
@@ -252,7 +308,7 @@ def annotate():
         for i in range(len(inference)):
             inf = [inference[i]]
             matrix = [score[0][i]]
-            fp = inference_to_json(inf, matrix, non_esc_array)
+            fp = inference_to_json_dev_demo(inf, matrix)
             first_pass_shown[str(i)] = fp
             shown_contains.append(fp['entities'])
 
