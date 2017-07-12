@@ -227,6 +227,8 @@ def annotate():
         text_array.append(new)
         non_esc_array.append((non_esc, charbeg, charend))
 
+    logger.info("non esc array " + str(non_esc_array))
+
     # =====================================================================================
 
     text = text_array
