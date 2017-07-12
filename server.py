@@ -51,8 +51,8 @@ def inference_to_json(inference, score_matrix, non_escaped):
 
         for i in range(len(boe)):
             # word_slice = [acc_len[boe[i]], acc_len[eoe[i]] - 1]
-            word_slice = [out_sent[1][boe[i]], out_sent[2][eoe[i]]]
-            logger.info("word slice: " + str(text[word_slice[0]:word_slice[1]]) + "chars: " + str(word_slice))
+            word_slice = [out_sent[1][boe[i]], out_sent[2][eoe[i] - 1]]
+            logger.info("word slice: " + str(text[word_slice[0]:word_slice[1]]) + " chars: " + str(word_slice))
             ent_score = s[boe[i]][eoe[i] - 1]
             if ent_score is not None:
                 logger.info("ent score : " + str(ent_score))
