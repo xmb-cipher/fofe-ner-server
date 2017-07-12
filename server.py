@@ -25,6 +25,8 @@ def inference_to_json(inference, score_matrix, non_escaped):
     :type inference: array, [(string, array of indices, array of indices, array of strings), (...)]
     :param score_matrix: matrix containing either None or a tuple (enitty name, score)
     :type score_matrix: array
+    :param non_escaped: an array of arrays containing the non-escaped version of the sentences
+    :type non_escaped: 2d array
     :return: Returns the infomation in inference as a dictionary
     :rtype: dict
     """
@@ -33,26 +35,20 @@ def inference_to_json(inference, score_matrix, non_escaped):
 
     n_entities = 0
     entities_new = []
-    scores = []  # (slice, score)
 
     m = 0
     for sent, boe, eoe, coe in inference:
-        # boe - beginning of entity (index)
-        # eoe - end of entity (index)
-        # coe - entity name
         acc_len = [offset]  # slice
         out_sent = non_escaped[m]
         s = score_matrix[m]
-        other = [offset]
 
-        for w in out_sent[0]:
+        for w in out_sent:
             acc_len.append(acc_len[-1] + len(w) + 1)  # last exclusive
 
-        text += u' '.join(out_sent[0]) + u'\n'
+        text += u' '.join(out_sent) + u'\n'
 
         for i in range(len(boe)):
             word_slice = [acc_len[boe[i]], acc_len[eoe[i]] - 1]
-            # word_slice = [out_sent[1][boe[i]], out_sent[2][eoe[i] - 1]]
             logger.info("word slice: " + str(text[word_slice[0]:word_slice[1]]) + " chars: " + str(word_slice))
             ent_score = s[boe[i]][eoe[i] - 1]
             if ent_score is not None:
@@ -63,13 +59,11 @@ def inference_to_json(inference, score_matrix, non_escaped):
                                      # ent_score[1]
                                      "{0:.2f}".format(ent_score[1])  # score
                                      ])
-                scores.append([word_slice, "{0:.2f}".format(ent_score[1])])
                 n_entities += 1
 
         # for the next sentence in the text
         offset = acc_len[-1]
         m += 1
-
 
     return {'text': text, 'entities': entities_new, 'comments': comments}
 
@@ -89,7 +83,6 @@ def inference_to_json_dev(inference, score_matrix):
 
     n_entities = 0
     entities_new = []
-    scores = []  # (slice, score)
     m = 0
     for sent, boe, eoe, coe in inference:
         # boe - beginning of entity (index)
@@ -115,7 +108,6 @@ def inference_to_json_dev(inference, score_matrix):
                                          # ent_score[1]
                                          "{0:.2f}".format(ent_score[1])  # score
                                          ])
-                    scores.append([word_slice, "{0:.2f}".format(ent_score[1])])
                     n_entities += 1
         m += 1
 
@@ -204,31 +196,19 @@ def annotate():
         properties['tokenize.language'] = 'es'
 
     output = nlp.annotate(text, properties=properties)
-    non_escaped = nlp.annotate(text, properties=properties)
-
-    pprint.pprint(output)
 
     text_array = []
     non_esc_array = []
-    text_to_offset = {}
     sentences = output['sentences']
     for sent in sentences:
         new = []
         non_esc = []
-        charbeg = []
-        charend = []
         tokens = sent['tokens']
         for word in tokens:
             new.append(word['word'])
-            charbeg.append(word['characterOffsetBegin'])
-            charend.append(word['characterOffsetEnd'])
             non_esc.append(word['originalText'])
-        if word['word'] not in text_to_offset:
-            text_to_offset
         text_array.append(new)
-        non_esc_array.append((non_esc, charbeg, charend))
-
-    logger.info("non esc array " + str(non_esc_array))
+        non_esc_array.append(non_esc)
 
     # =====================================================================================
 
@@ -272,7 +252,7 @@ def annotate():
         for i in range(len(inference)):
             inf = [inference[i]]
             matrix = [score[0][i]]
-            fp = inference_to_json(inf, matrix)
+            fp = inference_to_json(inf, matrix, non_esc_array)
             first_pass_shown[str(i)] = fp
             shown_contains.append(fp['entities'])
 
@@ -385,30 +365,6 @@ if __name__ == '__main__':
     annotator = fofe_ner_wrapper(args)
 
     app.run('0.0.0.0', args.port)
-
-
-
-{'text': u"The -LRB- Syrian Observatory -RRB- for Human Rights told Reuters on Tuesday that it had `` confirmed information '' that Islamic State leader Abu Bakr al-Baghdadi has been killed .\nThe report came just days after the Iraqi army recaptured the last sectors of the northern Iraqi city of Mosul , which Baghdadi 's forces overran almost exactly three years ago .\n", 'notes': '', 'mids': {}, 'comments': [],
- 'entities': [['T0', 'GPE_NAM', [[10, 16]], '0.98'], ['T1', 'ORG_NAM', [[57, 64]], '0.82'], ['T2', 'ORG_NAM', [[121, 134]], '0.95'], ['T3', 'PER_NOM', [[135, 141]], '0.90'], ['T4', 'GPE_NAM', [[217, 222]], '0.93'], ['T5', 'GPE_NAM', [[272, 277]], '0.98'], ['T6', 'GPE_NOM', [[278, 282]], '0.90'], ['T7', 'GPE_NAM', [[286, 291]], '0.86'], ['T8', 'GPE_NAM', [[300, 308]], '0.94']]}
-
-
-
-[([u'The', u'Syrian', u'Observatory', u'for', u'Human', u'Rights', u'told', u'Reuters', u'on', u'Tuesday', u'that', u'it',
- u'had', u'"', u'confirmed', u'information', u'"', u'that', u'Islamic', u'State', u'leader', u'Abu', u'Bakr', u'al-Baghdadi',
-  u'has', u'been', u'killed', u'.'], [0, 4, 11, 23, 27, 33, 40, 45, 53, 56, 64, 69, 72, 76, 77, 87, 98, 100, 105, 113, 119,
-   126, 130, 135, 147, 151, 156, 162], [3, 10, 22, 26, 32, 39, 44, 52, 55, 63, 68, 71, 75, 77, 86, 98, 99, 104, 112, 118, 125,
-    129, 134, 146, 150, 155, 162, 163]), ([u'The', u'report', u'came', u'just', u'days', u'after', u'the', u'Iraqi', u'army',
-     u'recaptured', u'the', u'last', u'sectors', u'of', u'the', u'northern', u'Iraqi', u'city', u'of', u'Mosul', u',', u'which',
-      u'Baghdadi', u"'s", u'forces', u'overran', u'almost', u'exactly', u'three', u'years', u'ago', u'.'], [164, 168, 175, 180,
-       185, 190, 196, 200, 206, 211, 222, 226, 231, 239, 242, 246, 255, 261, 266, 269, 274, 276, 282, 290, 293, 300, 308, 315,
-        323, 329, 335, 338], [167, 174, 179, 184, 189, 195, 199, 205, 210, 221, 225, 230, 238, 241, 245, 254, 260, 265, 268, 274,
-         275, 281, 290, 292, 299, 307, 314, 322, 328, 334, 338, 339])]
-
-
-
-
-
-
 
 
     
