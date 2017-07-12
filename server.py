@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 cls2ner = ['PER', 'LOC', 'ORG', 'MISC']
 app = Flask(__name__)
 
-def inference_to_json(inference, score_matrix):
+def inference_to_json(inference, non_escaped):
     """
     Converts the inference information into a JSON convertible data structure.
     :param inference: [(sentence, beginning of entity, end of entity, entity names), (...)]
@@ -34,23 +34,23 @@ def inference_to_json(inference, score_matrix):
     n_entities = 0
     entities_new = []
     scores = []  # (slice, score)
+
     m = 0
     for sent, boe, eoe, coe in inference:
         # boe - beginning of entity (index)
         # eoe - end of entity (index)
         # coe - entity name
         acc_len = [offset]  # slice
+        out_sent = non_escaped[m]
 
         for w in sent:
             acc_len.append(acc_len[-1] + len(w) + 1)  # last exclusive
 
-        s = score_matrix[m]
-        logger.info("matrix: " + str(s))
-
-        text += u' '.join(sent) + u'\n'
+        text += u' '.join(out_sent[0]) + u'\n'
 
         for i in range(len(boe)):
-            word_slice = [acc_len[boe[i]], acc_len[eoe[i]] - 1]
+            # word_slice = [acc_len[boe[i]], acc_len[eoe[i]] - 1]
+            word_slice = [out_sent[1][boe[i]]:out_sent[2][coe[i]]]
             logger.info("word slice: " + str(text[word_slice[0]:word_slice[1]]))
             ent_score = s[boe[i]][eoe[i] - 1]
             if ent_score is not None:
@@ -64,11 +64,10 @@ def inference_to_json(inference, score_matrix):
                 scores.append([word_slice, "{0:.2f}".format(ent_score[1])])
                 n_entities += 1
 
-
         # for the next sentence in the text
         offset = acc_len[-1]
-
         m += 1
+
 
     return {'text': text, 'entities': entities_new, 'comments': comments}
 
@@ -203,20 +202,29 @@ def annotate():
         properties['tokenize.language'] = 'es'
 
     output = nlp.annotate(text, properties=properties)
+    non_escaped = nlp.annotate(text, properties=properties)
 
     pprint.pprint(output)
 
     text_array = []
+    non_esc_array = []
     text_to_offset = {}
     sentences = output['sentences']
     for sent in sentences:
         new = []
+        non_esc = []
+        charbeg = []
+        charend = []
         tokens = sent['tokens']
         for word in tokens:
             new.append(word['word'])
+            charbeg.append(word['characterOffsetBegin'])
+            charend.append(word['characterOffsetEnd'])
+            non_esc.append(word['originalText'])
         if word['word'] not in text_to_offset:
             text_to_offset
         text_array.append(new)
+        non_esc_array.append((non_esc, charbeg, charend))
 
     # =====================================================================================
 
@@ -238,9 +246,9 @@ def annotate():
 
         start_time3 = time.time()
         if len(score) > 1:
-            result = inference_to_json(inference, score[1])
+            result = inference_to_json(inference, non_esc_array)
         else:
-            result = inference_to_json(inference, score[0])
+            result = inference_to_json(inference, non_esc_array)
 
         result['notes'] = notes
         print("DOC2JSONDEMO TAKES %s SECONDS" % (time.time() - start_time3))
@@ -378,24 +386,6 @@ if __name__ == '__main__':
 
 {'text': u"The -LRB- Syrian Observatory -RRB- for Human Rights told Reuters on Tuesday that it had `` confirmed information '' that Islamic State leader Abu Bakr al-Baghdadi has been killed .\nThe report came just days after the Iraqi army recaptured the last sectors of the northern Iraqi city of Mosul , which Baghdadi 's forces overran almost exactly three years ago .\n", 'notes': '', 'mids': {}, 'comments': [],
  'entities': [['T0', 'GPE_NAM', [[10, 16]], '0.98'], ['T1', 'ORG_NAM', [[57, 64]], '0.82'], ['T2', 'ORG_NAM', [[121, 134]], '0.95'], ['T3', 'PER_NOM', [[135, 141]], '0.90'], ['T4', 'GPE_NAM', [[217, 222]], '0.93'], ['T5', 'GPE_NAM', [[272, 277]], '0.98'], ['T6', 'GPE_NOM', [[278, 282]], '0.90'], ['T7', 'GPE_NAM', [[286, 291]], '0.86'], ['T8', 'GPE_NAM', [[300, 308]], '0.94']]}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
