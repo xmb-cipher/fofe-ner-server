@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 cls2ner = ['PER', 'LOC', 'ORG', 'MISC']
 app = Flask(__name__)
 
-def inference_to_json(inference, non_escaped):
+def inference_to_json(inference, score_matrix, non_escaped):
     """
     Converts the inference information into a JSON convertible data structure.
     :param inference: [(sentence, beginning of entity, end of entity, entity names), (...)]
@@ -42,6 +42,7 @@ def inference_to_json(inference, non_escaped):
         # coe - entity name
         acc_len = [offset]  # slice
         out_sent = non_escaped[m]
+        s = score_matrix[m]
 
         for w in sent:
             acc_len.append(acc_len[-1] + len(w) + 1)  # last exclusive
@@ -246,9 +247,9 @@ def annotate():
 
         start_time3 = time.time()
         if len(score) > 1:
-            result = inference_to_json(inference, non_esc_array)
+            result = inference_to_json(inference, score[1], non_esc_array)
         else:
-            result = inference_to_json(inference, non_esc_array)
+            result = inference_to_json(inference, score[0], non_esc_array)
 
         result['notes'] = notes
         print("DOC2JSONDEMO TAKES %s SECONDS" % (time.time() - start_time3))
