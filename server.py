@@ -51,8 +51,8 @@ def inference_to_json(inference, score_matrix, non_escaped):
 
         for i in range(len(boe)):
             # word_slice = [acc_len[boe[i]], acc_len[eoe[i]] - 1]
-            word_slice = [out_sent[1][boe[i]],out_sent[2][eoe[i]]]
-            logger.info("word slice: " + str(text[word_slice[0]:word_slice[1]]))
+            word_slice = [out_sent[1][boe[i]], out_sent[2][eoe[i]]]
+            logger.info("word slice: " + str(text[word_slice[0]:word_slice[1]]) + "chars: " + str(word_slice))
             ent_score = s[boe[i]][eoe[i] - 1]
             if ent_score is not None:
                 logger.info("ent score : " + str(ent_score))
@@ -392,6 +392,16 @@ if __name__ == '__main__':
 
 
 
+[([u'The', u'Syrian', u'Observatory', u'for', u'Human', u'Rights', u'told', u'Reuters', u'on', u'Tuesday', u'that', u'it',
+ u'had', u'"', u'confirmed', u'information', u'"', u'that', u'Islamic', u'State', u'leader', u'Abu', u'Bakr', u'al-Baghdadi',
+  u'has', u'been', u'killed', u'.'], [0, 4, 11, 23, 27, 33, 40, 45, 53, 56, 64, 69, 72, 76, 77, 87, 98, 100, 105, 113, 119,
+   126, 130, 135, 147, 151, 156, 162], [3, 10, 22, 26, 32, 39, 44, 52, 55, 63, 68, 71, 75, 77, 86, 98, 99, 104, 112, 118, 125,
+    129, 134, 146, 150, 155, 162, 163]), ([u'The', u'report', u'came', u'just', u'days', u'after', u'the', u'Iraqi', u'army',
+     u'recaptured', u'the', u'last', u'sectors', u'of', u'the', u'northern', u'Iraqi', u'city', u'of', u'Mosul', u',', u'which',
+      u'Baghdadi', u"'s", u'forces', u'overran', u'almost', u'exactly', u'three', u'years', u'ago', u'.'], [164, 168, 175, 180,
+       185, 190, 196, 200, 206, 211, 222, 226, 231, 239, 242, 246, 255, 261, 266, 269, 274, 276, 282, 290, 293, 300, 308, 315,
+        323, 329, 335, 338], [167, 174, 179, 184, 189, 195, 199, 205, 210, 221, 225, 230, 238, 241, 245, 254, 260, 265, 268, 274,
+         275, 281, 290, 292, 299, 307, 314, 322, 328, 334, 338, 339])]
 
 
 
