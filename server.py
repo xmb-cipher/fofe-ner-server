@@ -386,11 +386,11 @@ if __name__ == '__main__':
     logger.info(args.coreNLP_path)
     logger.info(args.coreNLP_port)
 
-    Popen(['java', '-mx4g', '-cp', '"*"',
-     'edu.stanford.nlp.pipeline.StanfordCoreNLPServer', '-port',
-      args.coreNLP_port, '-timeout', '15000'])
+    # Popen(['java', '-mx4g', '-cp', '"*"',
+    #  'edu.stanford.nlp.pipeline.StanfordCoreNLPServer', '-port',
+    #   args.coreNLP_port, '-timeout', '15000'])
 
-    # os.system('java -mx4g -cp "*" edu.stanford.nlp.pipeline.StanfordCoreNLPServer -port ' + args.coreNLP_port + ' -timeout 15000')
+    os.spawnl(os.P_DETACH, 'java -mx4g -cp "*" edu.stanford.nlp.pipeline.StanfordCoreNLPServer -port ' + args.coreNLP_port + ' -timeout 15000')
 
     os.chdir(cwd)
 
