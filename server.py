@@ -381,18 +381,18 @@ if __name__ == '__main__':
 
     print(args)
 
-    cwd = os.getcwd() # current directory
-    os.chdir(args.coreNLP_path)
-    logger.info(args.coreNLP_path)
-    logger.info(args.coreNLP_port)
+    # cwd = os.getcwd() # current directory
+    # os.chdir(args.coreNLP_path)
+    # logger.info(args.coreNLP_path)
+    # logger.info(args.coreNLP_port)
 
     # Popen(['java', '-mx4g', '-cp', '"*"',
     #  'edu.stanford.nlp.pipeline.StanfordCoreNLPServer', '-port',
     #   args.coreNLP_port, '-timeout', '15000'])
 
-    os.spawnl(os.P_NOWAIT, 'java -mx4g -cp "*" edu.stanford.nlp.pipeline.StanfordCoreNLPServer -port ' + args.coreNLP_port + ' -timeout 15000')
+    # os.spawnl(os.P_NOWAIT, 'java -mx4g -cp "*" edu.stanford.nlp.pipeline.StanfordCoreNLPServer -port ' + args.coreNLP_port + ' -timeout 15000')
 
-    os.chdir(cwd)
+    # os.chdir(cwd)
 
     if args.KBP:
         cls2ner = ['PER-NAME', 'ORG-NAME', 'GPE-NAME', 'LOC-NAME', 'FAC-NAME',
