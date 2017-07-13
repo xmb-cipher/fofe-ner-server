@@ -4,6 +4,7 @@
 from flask import Flask, render_template, request, jsonify
 from subprocess import call
 import os, time, sys, argparse, logging, pandas
+from subprocess import Popen
 from pandas import DataFrame
 from fofe_ner_wrapper import fofe_ner_wrapper
 from langdetect import detect
@@ -385,7 +386,11 @@ if __name__ == '__main__':
     logger.info(args.coreNLP_path)
     logger.info(args.coreNLP_port)
 
-    os.system('java -mx4g -cp "*" edu.stanford.nlp.pipeline.StanfordCoreNLPServer -port ' + args.coreNLP_port + ' -timeout 15000')
+    Popen(['java', '-mx4g', '-cp', '"*"',
+     'edu.stanford.nlp.pipeline.StanfordCoreNLPServer', '-port',
+      args.coreNLP_port, '-timeout', '15000'])
+
+    # os.system('java -mx4g -cp "*" edu.stanford.nlp.pipeline.StanfordCoreNLPServer -port ' + args.coreNLP_port + ' -timeout 15000')
 
     os.chdir(cwd)
 
