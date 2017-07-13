@@ -24,6 +24,15 @@ NextPort () {
 		}'
 }
 
+echo netstat -atn | perl -0777 -ne \
+		'@ports = /tcp.*?\:(\d+)\s+/imsg ;
+		for $port (32768..61000) {
+			if (!grep(/^$port$/, @ports)) {
+				print $port;
+				last
+			}
+		}'
+
 ${THIS_DIR}/server.py \
 	"${THIS_DIR}/model/eng2016" \
 	"${THIS_DIR}/model/gw128-case-insensitive.wordlist" \
