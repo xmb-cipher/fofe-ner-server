@@ -31,6 +31,6 @@ ${THIS_DIR}/server.py \
 	"${THIS_DIR}/model/gw128-case-insensitive.wordlist" \
 	"${THIS_DIR}/model/gw128-case-sensitive.wordlist" \
 	"/eecs/research/asr/Shared/ner-toolkit/CoreNLP" \
-	$(NextPort) \
+	"7000" \
 	--KBP \
 |& tee ${THIS_DIR}/logs/${timestamp}
