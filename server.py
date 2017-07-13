@@ -252,24 +252,20 @@ def annotate():
     # DEMO MODE
     if mode == 'demo':
         # retrieve the MIDs from the csv file
-        start_time1 = time.time()
         inference, score = annotator.annotate(text, isDevMode=True)
 
         logger.info("inference: " + str(inference))
 
         # Replace the offsets from the annotator with the offsets from Stanford
 
-        print("ANNOTATOR.ANNOTATE TAKES %s SECONDS" % (time.time() - start_time1))
 
 
-        start_time3 = time.time()
         if len(score) > 1:
             result = inference_to_json(inference, score[1], non_esc_array)
         else:
             result = inference_to_json(inference, score[0], non_esc_array)
 
         result['notes'] = notes
-        print("DOC2JSONDEMO TAKES %s SECONDS" % (time.time() - start_time3))
 
         result['mids'] = {}
 
@@ -352,9 +348,6 @@ def annotate():
             'entities': []
         }
 
-    logger.info('RESULT')
-    logger.info(result)
-    print("TOTAL TAKES %s SECONDS" % (time.time() - start_time))
     return jsonify(result)
 
 
