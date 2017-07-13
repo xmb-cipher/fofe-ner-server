@@ -21,24 +21,24 @@ app = Flask(__name__)
 def inference_to_json(inference, score_matrix, non_escaped):
     """
     Converts the inference information into a JSON convertible data structure.
-    :param inference: [(sentence, beginning of entity, end of entity, entity names), (...)]
-    :type inference: array, [(string, array of indices, array of indices, array of strings), (...)]
-    :param score_matrix: matrix containing either None or a tuple (enitty name, score)
+    :param inference: [(sentence, beginning of entity, end of entity,
+                         entity names), (...)]
+    :type inference: array, [(string, array of indices, array of indices,
+                             array of strings), (...)]
+    :param score_matrix: matrix containing either None or a tuple
+                         (enitty name, score)
     :type score_matrix: array
-    :param non_escaped: an array of arrays containing the non-escaped version of the sentences
+    :param non_escaped: an array of arrays containing the non-escaped version
+                        of the sentences
     :type non_escaped: 2d array
     :return: Returns the infomation in inference as a dictionary
     :rtype: dict
     """
-    text, entities, offset, n_entities = '', [], 0, 0
-    comments = []
+    text, entities_new, offset, n_entities, comments, m = '', [], 0, 0, [], 0
 
-    n_entities = 0
-    entities_new = []
-
-    m = 0
     for sent, boe, eoe, coe in inference:
-        acc_len = [offset]  # slice
+        acc_len = [offset]
+        # non-escaped sentence
         out_sent = non_escaped[m]
         s = score_matrix[m]
 
@@ -49,14 +49,11 @@ def inference_to_json(inference, score_matrix, non_escaped):
 
         for i in range(len(boe)):
             word_slice = [acc_len[boe[i]], acc_len[eoe[i]] - 1]
-            logger.info("word slice: " + str(text[word_slice[0]:word_slice[1]]) + " chars: " + str(word_slice))
             ent_score = s[boe[i]][eoe[i] - 1]
             if ent_score is not None:
-                logger.info("ent score : " + str(ent_score))
                 entities_new.append(['T%d' % n_entities,
                                      ent_score[0],
                                      [word_slice],
-                                     # ent_score[1]
                                      "{0:.2f}".format(ent_score[1])  # score
                                      ])
                 n_entities += 1
@@ -67,16 +64,14 @@ def inference_to_json(inference, score_matrix, non_escaped):
 
     return {'text': text, 'entities': entities_new, 'comments': comments}
 
+#===============================================================================
+# FUNCTIONS FOR DEVELOPER MODE (not clean) - To remove later
+#===============================================================================
 
 def inference_to_json_dev_demo(inference, score_matrix):
     """
     Converts the inference information into a JSON convertible data structure.
-    :param inference: [(sentence, beginning of entity, end of entity, entity names), (...)]
-    :type inference: array, [(string, array of indices, array of indices, array of strings), (...)]
-    :param score_matrix: matrix containing either None or a tuple (enitty name, score)
-    :type score_matrix: array
-    :return: Returns the infomation in inference as a dictionary
-    :rtype: dict
+    Same as inference_to_json() but does not convert to non-escaped.
     """
     text, entities, offset, n_entities = '', [], 0, 0
     comments = []
@@ -127,12 +122,7 @@ def inference_to_json_dev_demo(inference, score_matrix):
 def inference_to_json_dev(inference, score_matrix):
     """
     Converts the inference information into a JSON convertible data structure.
-    :param inference: [(sentence, beginning of entity, end of entity, entity names), (...)]
-    :type inference: array, [(string, array of indices, array of indices, array of strings), (...)]
-    :param score_matrix: matrix containing either None or a tuple (enitty name, score)
-    :type score_matrix: array
-    :return: Returns the infomation in inference as a dictionary
-    :rtype: dict
+    Returns all of the mentions detected without filtering by confidence.
     """
     text, entities, offset, n_entities = '', [], 0, 0
     comments = []
@@ -169,6 +159,7 @@ def inference_to_json_dev(inference, score_matrix):
 
     return {'text': text, 'entities': entities_new, 'comments': comments}
 
+#===============================================================================
 
 @app.route('/', methods=['GET'])
 def home_page():
@@ -183,15 +174,14 @@ def home_page():
 def annotate():
     """
     Responds to the ajax request fired when user submits the text to be detected.
-    Returns a JSON object: {'text': text, 'entities': entity info, 'lang': language of the text, 'notes': error notes}
+    Returns a JSON object: {'text': text, 'entities': entity info,
+                             'lang': language of the text, 'notes': error notes}
     """
-    start_time = time.time()
+
     mode = request.form['mode']
     text = request.form['text'].strip()
     selected = request.form['lang']
     notes = ""
-
-    sentence = text
 
     language = "eng"
     if selected == "Spanish":
@@ -200,41 +190,28 @@ def annotate():
     elif selected == "Chinese":
         language = "cmn"
 
-    # -------------------------- Language detector ---------------------------------
+    #-------------------------- Language detector ------------------------------
     elif selected == "Automatic":
         lang_detect = detect(text)
-        if lang_detect not in ['en', 'es', 'zh-cn', 'zh-tw']:
-            return jsonify({'text': "Language not found", 'entities': [], 'notes': "Language not supported."})
+        if lang_detect not in ['en', 'es']: #Chinese (later): 'zh-cn', 'zh-tw'
+            return jsonify({'text': "Language not found", 'entities': [],
+                            'notes': "Language not supported."})
 
-        english = ((lang_detect == 'en') and (language == "eng"))
-        spanish = ((lang_detect == 'es') and (language == "spa"))
-        chinese = ((lang_detect[0:2] == "zh") and (language == "cmn"))
+        english = (lang_detect == 'en') and (language == "eng")
+        spanish = (lang_detect == 'es') and (language == "spa")
+        chinese = (lang_detect[0:2] == "zh") and (language == "cmn")
 
-        if not (english or spanish or chinese):
-            selected = "Chinese"
-            if lang_detect == "en":
-                selected = "English"
-                language = "eng"
-            elif lang_detect == "es":
-                selected = "Spanish"
-                language = "spa"
+        selected = "Chinese"
+        if lang_detect == "en":
+                selected, language = "English", "eng"
+        elif lang_detect == "es":
+                selected, language = "Spanish", "spa"
 
-            notes = "Your selected language does not seem to match the language of the text." \
-                    " We will be assuming that the text is in " + selected + "."
+        notes = "Language detected: " + selected + "." 
 
     # =====================================================================================
     # Stanford CoreNLP
     # =====================================================================================
-
-    # cwd = os.getcwd() # current directory
-
-    # os.chdir(args.coreNLP_path)
-    # logger.info(args.coreNLP_path)
-    # logger.info(args.coreNLP_port)
-
-    # os.system('java -mx4g -cp "*" edu.stanford.nlp.pipeline.StanfordCoreNLPServer -port ' + args.coreNLP_port + ' -timeout 15000')
-
-    # os.chdir(cwd)
 
     nlp = StanfordCoreNLP('http://localhost:' + args.coreNLP_port)
 
@@ -374,17 +351,6 @@ def annotate():
             'entities': []
         }
 
-    # # example output
-    # result = jsonify({
-    #     'text'     : "Ed O'Kelley was the man who shot the man who shot Jesse James.",
-    #     'entities' : [
-    #         ['T1', 'PER', [[0, 11]]],
-    #         ['T2', 'PER', [[20, 23]]],
-    #         ['T3', 'PER', [[37, 40]]],
-    #         ['T4', 'PER', [[50, 61]]],
-    #     ],
-    # })
-
     logger.info('RESULT')
     logger.info(result)
     print("TOTAL TAKES %s SECONDS" % (time.time() - start_time))
@@ -413,6 +379,15 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     print(args)
+
+    cwd = os.getcwd() # current directory
+    os.chdir(args.coreNLP_path)
+    logger.info(args.coreNLP_path)
+    logger.info(args.coreNLP_port)
+
+    os.system('java -mx4g -cp "*" edu.stanford.nlp.pipeline.StanfordCoreNLPServer -port ' + args.coreNLP_port + ' -timeout 15000')
+
+    os.chdir(cwd)
 
     if args.KBP:
         cls2ner = ['PER-NAME', 'ORG-NAME', 'GPE-NAME', 'LOC-NAME', 'FAC-NAME',
