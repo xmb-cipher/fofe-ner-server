@@ -181,7 +181,7 @@ var demo_success_handler = function(response) {
             // add card to the linking
             var icon = '<div class="icon per-icon"><i class="fa fa-user fa-5x icon" aria-hidden="true"></i></div>';
             var type = "PER-NAME";
-            if ((ent_type.localeCompare("ORG") == 0) || (ent_type.localeCompare("ORG_NAM") == 0)){
+            if ((ent_type.localeCompare("ORG") === 0) || (ent_type.localeCompare("ORG_NAM") == 0)){
                 icon = '<div class="icon org-icon"><i class="fa fa-university fa-5x icon" aria-hidden="true"></i></div>';
                 type = "ORG-NAME";
             }
@@ -204,27 +204,27 @@ var demo_success_handler = function(response) {
                 type = "FAC-NAME";
             }
 
-            else if (ent_type.localeCompare("GPE-NOMINAL") == 0){
+            else if (ent_type.localeCompare("GPE_NOM") == 0){
                 icon = '<div class="icon gpenom-icon"><i class="fa  fa-globe fa-5x icon" aria-hidden="true"></i></div>';
                 type = "GPE-NOMINAL";
             }
 
-            else if (ent_type.localeCompare("FAC-NOMINAL") == 0){
+            else if (ent_type.localeCompare("FAC_NOM") == 0){
                 icon = '<div class="icon facnom-icon"><i class="fa fa-building-o fa-5x icon" aria-hidden="true"></i></div>';
                 type = "FAC-NOMINAL";
             }
-            else if (ent_type.localeCompare("PER-NOMINAL") == 0){
+            else if (ent_type.localeCompare("PER_NOM") == 0){
                 icon = '<div class="icon pernom-icon"><i class="fa  fa-globe fa-5x icon" aria-hidden="true"></i></div>';
                 type = "PER-NOMINAL";
             }
 
-            else if (ent_type.localeCompare("LOC-NOMINAL") == 0){
+            else if (ent_type.localeCompare("LOC_NOM") == 0){
                 icon = '<div class="icon locnom-icon"><i class="fa fa-building-o fa-5x icon" aria-hidden="true"></i></div>';
                 type = "LOC-NOMINAL";
             }
 
 
-            else if (ent_type.localeCompare("ORG-NOMINAL") == 0){
+            else if (ent_type.localeCompare("ORG_NOM") == 0){
                 icon = '<div class="icon orgnom-icon"><i class="fa fa-building-o fa-5x icon" aria-hidden="true"></i></div>';
                 type = "ORG-NOMINAL";
             }
