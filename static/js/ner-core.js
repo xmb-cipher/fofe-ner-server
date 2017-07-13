@@ -214,18 +214,18 @@ var demo_success_handler = function(response) {
                 type = "FAC-NOMINAL";
             }
             else if (ent_type.localeCompare("PER_NOM") == 0){
-                icon = '<div class="icon pernom-icon"><i class="fa  fa-globe fa-5x icon" aria-hidden="true"></i></div>';
+                icon = '<div class="icon pernom-icon"><i class="fa fa-user fa-5x icon" aria-hidden="true"></i></div>';
                 type = "PER-NOMINAL";
             }
 
             else if (ent_type.localeCompare("LOC_NOM") == 0){
-                icon = '<div class="icon locnom-icon"><i class="fa fa-building-o fa-5x icon" aria-hidden="true"></i></div>';
+                icon = '<div class="icon locnom-icon"><i class="fa fa-globe fa-5x icon" aria-hidden="true"></i></div>';
                 type = "LOC-NOMINAL";
             }
 
 
             else if (ent_type.localeCompare("ORG_NOM") == 0){
-                icon = '<div class="icon orgnom-icon"><i class="fa fa-building-o fa-5x icon" aria-hidden="true"></i></div>';
+                icon = '<div class="icon orgnom-icon"><i class="fa fa-university fa-5x icon" aria-hidden="true"></i></div>';
                 type = "ORG-NOMINAL";
             }
 
