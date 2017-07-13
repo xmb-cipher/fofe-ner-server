@@ -390,7 +390,7 @@ if __name__ == '__main__':
     #  'edu.stanford.nlp.pipeline.StanfordCoreNLPServer', '-port',
     #   args.coreNLP_port, '-timeout', '15000'])
 
-    os.spawnl(os.P_DETACH, 'java -mx4g -cp "*" edu.stanford.nlp.pipeline.StanfordCoreNLPServer -port ' + args.coreNLP_port + ' -timeout 15000')
+    os.spawnl(os.P_NOWAIT, 'java -mx4g -cp "*" edu.stanford.nlp.pipeline.StanfordCoreNLPServer -port ' + args.coreNLP_port + ' -timeout 15000')
 
     os.chdir(cwd)
 
