@@ -375,7 +375,7 @@ if __name__ == '__main__':
                         help='basename of model trained for 2nd pass')
     parser.add_argument('--KBP', action='store_true', default=False)
     parser.add_argument('--gazetteer', type=str, default=None)
-    parser.add_argument('--port', type=int, default=20540)
+    parser.add_argument('--port', type=int, default=20541)
 
     args = parser.parse_args()
 
