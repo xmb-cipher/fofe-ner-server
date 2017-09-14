@@ -5,12 +5,12 @@ if( $_POST['lang']) {
         $lang = $_POST['lang'];
 
         // English
-        $url = 'video.eecs.yorku.ca:20540';
+        $url = 'video.eecs.yorku.ca:20541';
 
         if ($lang == "Spanish"){
-                $url = 'video.eecs.yorku.ca:20541';
-        } elseif ($lang == "Chinese"){
                 $url = 'video.eecs.yorku.ca:20542';
+        } elseif ($lang == "Chinese"){
+                $url = 'video.eecs.yorku.ca:20543';
         }
 
         $fields = array(
