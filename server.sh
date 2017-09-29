@@ -3,6 +3,8 @@
 set -e
 
 export THIS_DIR=$(cd $(dirname $0); pwd)
+source ${THIS_DIR}/path.sh
+
 export CUDA_VISIBLE_DEVICES=''
 
 [ ! -d ${THIS_DIR}/logs ] && mkdir -p ${THIS_DIR}/logs
