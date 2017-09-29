@@ -1,15 +1,15 @@
 #!/eecs/research/asr/mingbin/python-workspace/hopeless/bin/python
 # -*- coding: utf-8 -*-
 
+import os, time, sys, argparse, logging, pandas, pprint, urllib
 from flask import Flask, render_template, request, jsonify
 from subprocess import call
-import os, time, sys, argparse, logging, pandas
 from subprocess import Popen
 from pandas import DataFrame
 from fofe_ner_wrapper import fofe_ner_wrapper
 from langdetect import detect
 from pycorenlp import StanfordCoreNLP
-import pprint
+from hanziconv import HanziConv
 
 reload(sys)
 sys.setdefaultencoding("utf-8")
@@ -226,6 +226,7 @@ def annotate():
         properties['tokenize.serDictionary'] = 'edu/stanford/nlp/models/segmenter/chinese/dict-chris6.ser.gz'
         properties['tokenize.sighanPostProcessing'] = 'true'
         properties['ssplit.boundaryTokenRegex'] = urllib.quote_plus('[!?]+|[。]|[！？]+')
+        text = HanziConv.toSimplified( text )
     elif language == 'spa':
         properties['tokenize.language'] = 'es'
 
@@ -239,8 +240,21 @@ def annotate():
         non_esc = []
         tokens = sent['tokens']
         for word in tokens:
-            new.append(word['word'])
-            non_esc.append(word['originalText'])
+            if language == 'cmn':
+                has_chinese = any( u'\u4e00' <= c <= u'\u9fff' for c in word['word'] )
+                if has_chinese:
+                    for i,c in enumerate( word['word'] ):
+                        new.append( u'%s|iNCML|%s' % (c, word['word']) )
+                        non_esc.append( c )
+                else:
+                    new.append( u'%s|iNCML|%s' % (word['word'], word['word']) )
+                    if len(word['originalText']) == 0:
+                        non_esc.append(word['word'])
+                    else:
+                        non_esc.append(word['originalText'])
+            else:
+                new.append(word['word'])
+                non_esc.append(word['originalText'])
         text_array.append(new)
         non_esc_array.append(non_esc)
 
@@ -264,6 +278,7 @@ def annotate():
             result = inference_to_json(inference, score[1], non_esc_array)
         else:
             result = inference_to_json(inference, score[0], non_esc_array)
+        logger.info(result['text'])
 
         result['notes'] = notes
 
@@ -272,6 +287,13 @@ def annotate():
     # DEVELOPER MODE
     elif mode == 'dev':
         inference, score = annotator.annotate(text, isDevMode=True)
+
+        if language == 'cmn':
+            for i in xrange(len(text_array)):
+                for j in xrange(len(text_array[i])):
+                    k = text_array[i][j].find('|iNCML|')
+                    text_array[i][j] = text_array[i][j][:k]
+
 
         # contains the first pass info for sentences -  {"0": {text: ..., entities: ..., comments: ...}, "1": {...}}
         first_pass_shown = {}
@@ -369,6 +391,7 @@ if __name__ == '__main__':
     parser.add_argument('--KBP', action='store_true', default=False)
     parser.add_argument('--gazetteer', type=str, default=None)
     parser.add_argument('--port', type=int, default=20541)
+    parser.add_argument('--wubi', type=str, default=None)
 
     args = parser.parse_args()
 

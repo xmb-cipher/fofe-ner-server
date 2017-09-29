@@ -14,8 +14,8 @@ class fofe_ner_wrapper( object ):
         config1 = mention_config()
         print('%s.config' % model1st)
         with open( '%s.config' % model1st, 'rb' ) as fp:
-            config1 = cPickle.load( fp )
-            # config1.__dict__.update( conf.__dict__ )
+            # I write this in such ugly way for backward compatibility
+            config1.__dict__.update( cPickle.load( fp ).__dict__ )
             
         mention_net_1st = fofe_mention_net( config1, None )
         mention_net_1st.fromfile( model1st )
@@ -23,16 +23,21 @@ class fofe_ner_wrapper( object ):
         vocab1 = args.vocab1
         vocab2 = args.vocab2
 
-        numericizer1_1st = vocabulary( 
-            vocab1,
-            config1.char_alpha, 
-            False 
-        )
-        numericizer2_1st = vocabulary( 
-            vocab2,
-            config1.char_alpha, 
-            True 
-        )
+        if args.wubi is None:
+            numericizer1_1st = vocabulary( 
+                vocab1,
+                config1.char_alpha, 
+                False 
+            )
+            numericizer2_1st = vocabulary( 
+                vocab2,
+                config1.char_alpha, 
+                True 
+            )
+        else:
+            numericizer1_1st = chinese_word_vocab( vocab1 )
+            numericizer2_1st = chinese_word_vocab( vocab2 )
+            numericizer1_1st.loadWubiKeyStroke( args.wubi )
         logger.info( '1st pass vocabulary loaded\n' )
 
         self.mention_net_1st = mention_net_1st
@@ -52,18 +57,29 @@ class fofe_ner_wrapper( object ):
             mention_net_2nd = fofe_mention_net( config2, None )
             mention_net_2nd.fromfile( model2nd )
 
-            numericizer1_2nd = vocabulary( 
-                vocab1,
-                config2.char_alpha, 
-                False,
-                n_label_type = config2.n_label_type 
-            )
-            numericizer2_2nd = vocabulary( 
-                vocab2,
-                config2.char_alpha, 
-                True,
-                n_label_type = config2.n_label_type 
-            )
+            if args.wubi is None:
+                numericizer1_2nd = vocabulary( 
+                    vocab1,
+                    config2.char_alpha, 
+                    False,
+                    n_label_type = config2.n_label_type 
+                )
+                numericizer2_2nd = vocabulary( 
+                    vocab2,
+                    config2.char_alpha, 
+                    True,
+                    n_label_type = config2.n_label_type 
+                )
+            else:
+                numericizer1_2nd = chinese_word_vocab( 
+                    vocab1,
+                    n_label_type = config2.n_label_type
+                )
+                numericizer2_2nd = chinese_word_vocab( 
+                    vocab2,
+                    n_label_type = config2.n_label_type
+                )
+                numericizer1_2nd.loadWubiKeyStroke( args.wubi )
             logger.info( '2nd pass vocabulary loaded\n' )
 
             self.has2nd = True
@@ -80,7 +96,9 @@ class fofe_ner_wrapper( object ):
         if args.gazetteer is None:
             self.gazetteer = [set()] * self.config1st.n_label_type
         else:
-            pass
+            logger.info( 'Loading compressed gazetteer' )
+            with open( args.gazetteer, 'rb' ) as fp:
+                self.gazetteer = cPickle.load( fp )
 
 
     def annotate( self, sentences, isDevMode = False ):
@@ -136,8 +154,7 @@ class fofe_ner_wrapper( object ):
                     sent, 
                     estimate, 
                     table, 
-                    [0.72, 0.72], # self.config1st.threshold,
-                                # TODO: the threshold pair from dev-set doesn't seem good
+                    self.config1st.threshold,
                     self.config1st.algorithm
                 )
             )
