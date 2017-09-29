@@ -1,6 +1,5 @@
-
-#instruction { 
-    font-size: 20px;
+#instruction {
+	font-size: 20px;
 }
 
 #text-container {
@@ -14,10 +13,10 @@
 	font-family: Courier, Monospace;
 	font-size: 16px;
 	width: 100%;
-    min-height: 128px;
+	min-height: 128px;
 }
 
-#submit {
+#submit, #dev_submit {
 	font-size: 16px;
 	float: right;
 	margin-bottom: 16px;
@@ -34,18 +33,18 @@
 	margin-top: 49px;
 	margin-bottom: 32px;
 	width: 512px;
-    height: 128px;
-    padding: 8px;
-    background-color: snow;
-    box-shadow: 6px 6px 2px 8px grey;
+	height: 128px;
+	padding: 8px;
+	background-color: snow;
+	box-shadow: 6px 6px 2px 8px grey;
 }
 
-hr { 
-    display: block;
-    margin-top: 0.5em;
-    margin-bottom: 0.5em;
-    margin-left: auto;
-    margin-right: auto;
-    border-style: inset;
-    border-width: 1px;
+hr {
+	display: block;
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+	margin-left: auto;
+	margin-right: auto;
+	border-style: inset;
+	border-width: 1px;
 } 

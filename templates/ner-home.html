@@ -2,30 +2,114 @@
 <html>
 
 <head>
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NER Demo</title>
-    <link rel="stylesheet" type="text/css" href="static/css/style-vis.css">
+
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="static/css/ner-core.css">
-    <script type="text/javascript" src="static/js/head.js"></script>
-	<script type="text/javascript" src="static/js/brat_loader.js"></script>
-	<script type="text/javascript" src="static/js/ner-core.js"></script>
+    <link rel="stylesheet" type="text/css" href="static/css/style-vis.css">
+    <link rel="stylesheet" type="text/css" href="static/css/style.css">
+
+    <!-- Fonts -->
+    <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+    <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+
+    <!-- Script files -->
+    <script type="text/javascript" src="static/js/head.js" defer></script>
+    <script type="text/javascript" src="static/js/brat_loader.js" defer></script>
+    <script type="text/javascript" src="static/js/ner-core.js" defer></script>
+    <script
+            src="https://code.jquery.com/jquery-3.2.1.min.js"
+            integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+            crossorigin="anonymous" defer></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous" defer></script>
+
+    <!-- Font awesome -->
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css"
+          rel="stylesheet"
+          integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1"
+          crossorigin="anonymous">
 </head>
 
 <body>
+<!-- NAVIGATION BAR -->
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header page-scroll">
+            <a class="navbar-brand" href="http://lassonde.yorku.ca/" target="_blank"><img src="static/img/logo.jpg" class="img-responsive" alt="Lassonde Logo">
+            </a><p class="navbar-text">FOFE-based Local Detection Approach for Named Entity Recognition and Mention Detection</p>
+        </div>
 
-<div id='instruction'>Please type some sentence(s):</div>
+        <div class="collapse navbar-collapse" id="main-nav">
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container-fluid -->
+</nav>
+<main>
+    <section id="input-field">
+        <div class="container">
+            <div id="instruction" class="row">
+                <div class="instr col-md-8 pull-left">
+                    <h4>Please type some sentence(s):</h4>
+                </div>
+                <div class="col-md-4 pull-left lang">
+                    <form>
+                        <div class="form-group">
+                            <label for="lang-sel">Select a language: </label>
+                            <select class="form-control" id="lang-sel">
+                                <option selected="selected" value="0">English</option>
+                                <option value="1">Spanish</option>
+                                <option value="2">Chinese</option>
+                                <option value="3">Automatic</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="form-group row">
+                <textarea id='user-input' class="form-control" placeholder="" rows="5" name="message">The Syrian Observatory for Human Rights told Reuters on Tuesday that it had "confirmed information" that Islamic State leader Abu Bakr al-Baghdadi has been killed. The report came just days after the Iraqi army recaptured the last sectors of the northern Iraqi city of Mosul, which Baghdadi's forces overran almost exactly three years ago.</textarea>
+            </div>
+            <div class="row">
+                <button id='submit' class="btn-lg btn btn-primary submit"><span>Demo Mode</span></button>
+            </div>
 
-<!-- <textarea id='user-input' rows='16' cols='100'> -->
-<div id='text-container'>
-<textarea id='user-input'>
-Hopelessness is on the other side of my finishing line.
-</textarea>
-<button id='submit' type='button'>Submit</button>
-</div>
+            <div class="row">
+                <button id='dev_submit' class="btn-lg btn btn-primary"><span>Developer Mode</span></button>
+            </div>
+        </div>
+    </section>
 
+    <div class="container">
+        <div id="spinner" class="pull-left spinner" style="display: none;">
+            <div class="double-bounce1"></div>
+            <div class="double-bounce2"></div>
+        </div>
+    </div>
 
-<div id='analysis'></div>
-<div id='linking'></div>
+    <section id="response-field">
+        <div class="container">
+            <div id='errors'></div>
+            <!--brat visualizations-->
+            <div id='analysis' class="remove-all-styles"></div>
+            <div id='linking'></div>
 
+        </div>
+    </section>
+</main>
+
+<footer id="footer">
+    <div class="container">
+        <div class="col-md-12">
+            <i class="fa fa-copyright" aria-hidden="true"></i> 2017 All rights reserved - Mingbin Xu and Nana Nosirova.
+        </div>
+    </div>
+
+</footer>
 </body>
 </html>
+

@@ -6,16 +6,17 @@ from io import BytesIO
 
 logger = logging.getLogger( __name__ )
 
-
-
 class fofe_ner_wrapper( object ):
     def __init__( self, args ):
         #####################
         # load 1st-pass model
         model1st = args.model1st
         config1 = mention_config()
+        print('%s.config' % model1st)
         with open( '%s.config' % model1st, 'rb' ) as fp:
-            config1.__dict__.update( cPickle.load(fp).__dict__ )
+            config1 = cPickle.load( fp )
+            # config1.__dict__.update( conf.__dict__ )
+            
         mention_net_1st = fofe_mention_net( config1, None )
         mention_net_1st.fromfile( model1st )
 

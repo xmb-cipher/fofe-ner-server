@@ -212,21 +212,21 @@ class fofe_mention_net( object ):
                             (self.n_word2, n_word_embedding2) ).astype( numpy.float32 )
             logger.info( 'embedding is randomly initialized' )
 
-        if config.is_2nd_pass:
-            logger.info( 'In 2nd pass, substitute the last few entries with label types.' )
-            projection1[-1 - n_label_type: -1, :] = \
-                            numpy.random.uniform( 
-                                    projection1.min(), projection1.max(),
-                                    (n_label_type, n_word_embedding1) 
-                            ).astype( numpy.float32 )
-            sub = numpy.random.uniform( 
-                                projection2.min(), projection2.max(),
-                                (n_label_type, n_word_embedding2) 
-                        ).astype( numpy.float32 )
-            if self.config.language == 'cmn':
-                projection2[-1 - n_label_type: -1, :] = sub
-            else:
-                projection2[-2 - n_label_type: -2, :] = sub
+        # if config.is_2nd_pass:
+        #     logger.info( 'In 2nd pass, substitute the last few entries with label types.' )
+        #     projection1[-1 - n_label_type: -1, :] = \
+        #                     numpy.random.uniform( 
+        #                             projection1.min(), projection1.max(),
+        #                             (n_label_type, n_word_embedding1) 
+        #                     ).astype( numpy.float32 )
+        #     sub = numpy.random.uniform( 
+        #                         projection2.min(), projection2.max(),
+        #                         (n_label_type, n_word_embedding2) 
+        #                 ).astype( numpy.float32 )
+        #     if self.config.language == 'cmn':
+        #         projection2[-1 - n_label_type: -1, :] = sub
+        #     else:
+        #         projection2[-2 - n_label_type: -2, :] = sub
 
         # dimension of x in the HOPE paper
         hope_in = 0
@@ -524,13 +524,13 @@ class fofe_mention_net( object ):
             self.xent = tf.reduce_mean( tf.nn.sparse_softmax_cross_entropy_with_logits( 
                                             logits = layer_output[-1], labels = self.label ) )
 
-            if config.l1 > 0:
-                for param in self.param:
-                    self.xent = self.xent + config.l1 * tf.reduce_sum( tf.abs( param ) )
+            # if config.l1 > 0:
+            #     for param in self.param:
+            #         self.xent = self.xent + config.l1 * tf.reduce_sum( tf.abs( param ) )
 
-            if config.l2 > 0:
-                for param in  self.param:
-                    self.xent = self.xent + config.l2 * tf.nn.l2_loss( param )
+            # if config.l2 > 0:
+            #     for param in  self.param:
+            #         self.xent = self.xent + config.l2 * tf.nn.l2_loss( param )
 
             self.predicted_values = tf.nn.softmax( layer_output[-1] )
             _, top_indices = tf.nn.top_k( self.predicted_values )
